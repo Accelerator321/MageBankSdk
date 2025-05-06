@@ -17,13 +17,11 @@ base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 class TestUser:
     parametrize = pytest.mark.parametrize("client", [False, True], indirect=True, ids=["loose", "strict"])
 
-    @pytest.mark.skip()
     @parametrize
     def test_method_list_payments(self, client: Magebank) -> None:
         user = client.user.list_payments()
         assert_matches_type(UserListPaymentsResponse, user, path=["response"])
 
-    @pytest.mark.skip()
     @parametrize
     def test_method_list_payments_with_all_params(self, client: Magebank) -> None:
         user = client.user.list_payments(
@@ -31,7 +29,6 @@ class TestUser:
         )
         assert_matches_type(UserListPaymentsResponse, user, path=["response"])
 
-    @pytest.mark.skip()
     @parametrize
     def test_raw_response_list_payments(self, client: Magebank) -> None:
         response = client.user.with_raw_response.list_payments()
@@ -41,7 +38,6 @@ class TestUser:
         user = response.parse()
         assert_matches_type(UserListPaymentsResponse, user, path=["response"])
 
-    @pytest.mark.skip()
     @parametrize
     def test_streaming_response_list_payments(self, client: Magebank) -> None:
         with client.user.with_streaming_response.list_payments() as response:
@@ -53,13 +49,11 @@ class TestUser:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip()
     @parametrize
     def test_method_retrieve_wallet_balance(self, client: Magebank) -> None:
         user = client.user.retrieve_wallet_balance()
         assert_matches_type(UserRetrieveWalletBalanceResponse, user, path=["response"])
 
-    @pytest.mark.skip()
     @parametrize
     def test_raw_response_retrieve_wallet_balance(self, client: Magebank) -> None:
         response = client.user.with_raw_response.retrieve_wallet_balance()
@@ -69,7 +63,6 @@ class TestUser:
         user = response.parse()
         assert_matches_type(UserRetrieveWalletBalanceResponse, user, path=["response"])
 
-    @pytest.mark.skip()
     @parametrize
     def test_streaming_response_retrieve_wallet_balance(self, client: Magebank) -> None:
         with client.user.with_streaming_response.retrieve_wallet_balance() as response:
@@ -85,13 +78,11 @@ class TestUser:
 class TestAsyncUser:
     parametrize = pytest.mark.parametrize("async_client", [False, True], indirect=True, ids=["loose", "strict"])
 
-    @pytest.mark.skip()
     @parametrize
     async def test_method_list_payments(self, async_client: AsyncMagebank) -> None:
         user = await async_client.user.list_payments()
         assert_matches_type(UserListPaymentsResponse, user, path=["response"])
 
-    @pytest.mark.skip()
     @parametrize
     async def test_method_list_payments_with_all_params(self, async_client: AsyncMagebank) -> None:
         user = await async_client.user.list_payments(
@@ -99,7 +90,6 @@ class TestAsyncUser:
         )
         assert_matches_type(UserListPaymentsResponse, user, path=["response"])
 
-    @pytest.mark.skip()
     @parametrize
     async def test_raw_response_list_payments(self, async_client: AsyncMagebank) -> None:
         response = await async_client.user.with_raw_response.list_payments()
@@ -109,7 +99,6 @@ class TestAsyncUser:
         user = await response.parse()
         assert_matches_type(UserListPaymentsResponse, user, path=["response"])
 
-    @pytest.mark.skip()
     @parametrize
     async def test_streaming_response_list_payments(self, async_client: AsyncMagebank) -> None:
         async with async_client.user.with_streaming_response.list_payments() as response:
@@ -121,13 +110,11 @@ class TestAsyncUser:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip()
     @parametrize
     async def test_method_retrieve_wallet_balance(self, async_client: AsyncMagebank) -> None:
         user = await async_client.user.retrieve_wallet_balance()
         assert_matches_type(UserRetrieveWalletBalanceResponse, user, path=["response"])
 
-    @pytest.mark.skip()
     @parametrize
     async def test_raw_response_retrieve_wallet_balance(self, async_client: AsyncMagebank) -> None:
         response = await async_client.user.with_raw_response.retrieve_wallet_balance()
@@ -137,7 +124,6 @@ class TestAsyncUser:
         user = await response.parse()
         assert_matches_type(UserRetrieveWalletBalanceResponse, user, path=["response"])
 
-    @pytest.mark.skip()
     @parametrize
     async def test_streaming_response_retrieve_wallet_balance(self, async_client: AsyncMagebank) -> None:
         async with async_client.user.with_streaming_response.retrieve_wallet_balance() as response:
