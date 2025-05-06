@@ -42,7 +42,7 @@ print(agent.id)
 
 While you can provide a `auth_token` keyword argument,
 we recommend using [python-dotenv](https://pypi.org/project/python-dotenv/)
-to add `MAGEBANK_AUTH_TOKEN="My Auth Token"` to your `.env` file
+to add `MAGEBANK_AUTH_TOKENOptional environment variable="My Auth Token"` to your `.env` file
 so that your Auth Token is not stored in source control.
 
 ## Async usage
