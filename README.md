@@ -40,10 +40,10 @@ agent = client.agents_with.retrieve(
 print(agent.id)
 ```
 
-While you can provide an `api_key` keyword argument,
+While you can provide a `auth_token` keyword argument,
 we recommend using [python-dotenv](https://pypi.org/project/python-dotenv/)
-to add `MAGEBANK_API_KEY="My API Key"` to your `.env` file
-so that your API Key is not stored in source control.
+to add `MAGEBANK_AUTH_TOKEN="My Auth Token"` to your `.env` file
+so that your Auth Token is not stored in source control.
 
 ## Async usage
 
