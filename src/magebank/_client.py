@@ -53,11 +53,13 @@ class Magebank(SyncAPIClient):
 
     # client options
     api_key: str
+    auth_token: str
 
     def __init__(
         self,
         *,
         api_key: str | None = None,
+        auth_token: str | None = None,
         base_url: str | httpx.URL | None = None,
         timeout: Union[float, Timeout, None, NotGiven] = NOT_GIVEN,
         max_retries: int = DEFAULT_MAX_RETRIES,
@@ -79,7 +81,9 @@ class Magebank(SyncAPIClient):
     ) -> None:
         """Construct a new synchronous Magebank client instance.
 
-        This automatically infers the `api_key` argument from the `MAGEBANK_API_KEY` environment variable if it is not provided.
+        This automatically infers the following arguments from their corresponding environment variables if they are not provided:
+        - `api_key` from `MAGEBANK_API_KEY`
+        - `auth_token` from `MAGEBANK_AUTH_TOKEN`
         """
         if api_key is None:
             api_key = os.environ.get("MAGEBANK_API_KEY")
@@ -88,6 +92,14 @@ class Magebank(SyncAPIClient):
                 "The api_key client option must be set either by passing api_key to the client or by setting the MAGEBANK_API_KEY environment variable"
             )
         self.api_key = api_key
+
+        if auth_token is None:
+            auth_token = os.environ.get("MAGEBANK_AUTH_TOKEN")
+        if auth_token is None:
+            raise MagebankError(
+                "The auth_token client option must be set either by passing auth_token to the client or by setting the MAGEBANK_AUTH_TOKEN environment variable"
+            )
+        self.auth_token = auth_token
 
         if base_url is None:
             base_url = os.environ.get("MAGEBANK_BASE_URL")
@@ -121,6 +133,15 @@ class Magebank(SyncAPIClient):
     @property
     @override
     def auth_headers(self) -> dict[str, str]:
+        return {**self._bearer_auth, **self._api_key_auth}
+
+    @property
+    def _bearer_auth(self) -> dict[str, str]:
+        auth_token = self.auth_token
+        return {"Authorization": f"Bearer {auth_token}"}
+
+    @property
+    def _api_key_auth(self) -> dict[str, str]:
         api_key = self.api_key
         return {"x-api-key": api_key}
 
@@ -137,6 +158,7 @@ class Magebank(SyncAPIClient):
         self,
         *,
         api_key: str | None = None,
+        auth_token: str | None = None,
         base_url: str | httpx.URL | None = None,
         timeout: float | Timeout | None | NotGiven = NOT_GIVEN,
         http_client: httpx.Client | None = None,
@@ -171,6 +193,7 @@ class Magebank(SyncAPIClient):
         http_client = http_client or self._client
         return self.__class__(
             api_key=api_key or self.api_key,
+            auth_token=auth_token or self.auth_token,
             base_url=base_url or self.base_url,
             timeout=self.timeout if isinstance(timeout, NotGiven) else timeout,
             http_client=http_client,
@@ -229,11 +252,13 @@ class AsyncMagebank(AsyncAPIClient):
 
     # client options
     api_key: str
+    auth_token: str
 
     def __init__(
         self,
         *,
         api_key: str | None = None,
+        auth_token: str | None = None,
         base_url: str | httpx.URL | None = None,
         timeout: Union[float, Timeout, None, NotGiven] = NOT_GIVEN,
         max_retries: int = DEFAULT_MAX_RETRIES,
@@ -255,7 +280,9 @@ class AsyncMagebank(AsyncAPIClient):
     ) -> None:
         """Construct a new async AsyncMagebank client instance.
 
-        This automatically infers the `api_key` argument from the `MAGEBANK_API_KEY` environment variable if it is not provided.
+        This automatically infers the following arguments from their corresponding environment variables if they are not provided:
+        - `api_key` from `MAGEBANK_API_KEY`
+        - `auth_token` from `MAGEBANK_AUTH_TOKEN`
         """
         if api_key is None:
             api_key = os.environ.get("MAGEBANK_API_KEY")
@@ -264,6 +291,14 @@ class AsyncMagebank(AsyncAPIClient):
                 "The api_key client option must be set either by passing api_key to the client or by setting the MAGEBANK_API_KEY environment variable"
             )
         self.api_key = api_key
+
+        if auth_token is None:
+            auth_token = os.environ.get("MAGEBANK_AUTH_TOKEN")
+        if auth_token is None:
+            raise MagebankError(
+                "The auth_token client option must be set either by passing auth_token to the client or by setting the MAGEBANK_AUTH_TOKEN environment variable"
+            )
+        self.auth_token = auth_token
 
         if base_url is None:
             base_url = os.environ.get("MAGEBANK_BASE_URL")
@@ -297,6 +332,15 @@ class AsyncMagebank(AsyncAPIClient):
     @property
     @override
     def auth_headers(self) -> dict[str, str]:
+        return {**self._bearer_auth, **self._api_key_auth}
+
+    @property
+    def _bearer_auth(self) -> dict[str, str]:
+        auth_token = self.auth_token
+        return {"Authorization": f"Bearer {auth_token}"}
+
+    @property
+    def _api_key_auth(self) -> dict[str, str]:
         api_key = self.api_key
         return {"x-api-key": api_key}
 
@@ -313,6 +357,7 @@ class AsyncMagebank(AsyncAPIClient):
         self,
         *,
         api_key: str | None = None,
+        auth_token: str | None = None,
         base_url: str | httpx.URL | None = None,
         timeout: float | Timeout | None | NotGiven = NOT_GIVEN,
         http_client: httpx.AsyncClient | None = None,
@@ -347,6 +392,7 @@ class AsyncMagebank(AsyncAPIClient):
         http_client = http_client or self._client
         return self.__class__(
             api_key=api_key or self.api_key,
+            auth_token=auth_token or self.auth_token,
             base_url=base_url or self.base_url,
             timeout=self.timeout if isinstance(timeout, NotGiven) else timeout,
             http_client=http_client,
