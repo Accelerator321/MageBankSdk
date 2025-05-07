@@ -37,7 +37,7 @@ class Payment(BaseModel):
     approvalrequired: Optional[bool] = None
     """Whether this payment requires approval"""
 
-    approvalstatus: Optional[Literal["Waiting", "Approved", "Decline"]] = None
+    approvalstatus: Optional[Literal["Pending", "Approved", "Decline"]] = None
     """Approval status of the payment"""
 
     approvedat: Optional[datetime] = None
