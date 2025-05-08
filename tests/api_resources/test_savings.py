@@ -13,9 +13,7 @@ from magebank.types import (
     SavingDepositResponse,
     SavingWithdrawResponse,
     SavingListInvestmentsResponse,
-    SavingCalculateInterestResponse,
     SavingRetrieveDashboardResponse,
-    SavingRetrieveInterestRateResponse,
     SavingListInvestmentsByAgentResponse,
 )
 
@@ -24,49 +22,6 @@ base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
 class TestSavings:
     parametrize = pytest.mark.parametrize("client", [False, True], indirect=True, ids=["loose", "strict"])
-
-    @parametrize
-    def test_method_calculate_interest(self, client: Magebank) -> None:
-        saving = client.savings.calculate_interest(
-            amount=1000,
-            days=365,
-        )
-        assert_matches_type(SavingCalculateInterestResponse, saving, path=["response"])
-
-    @parametrize
-    def test_method_calculate_interest_with_all_params(self, client: Magebank) -> None:
-        saving = client.savings.calculate_interest(
-            amount=1000,
-            days=365,
-            custom_rate=4.5,
-        )
-        assert_matches_type(SavingCalculateInterestResponse, saving, path=["response"])
-
-    @parametrize
-    def test_raw_response_calculate_interest(self, client: Magebank) -> None:
-        response = client.savings.with_raw_response.calculate_interest(
-            amount=1000,
-            days=365,
-        )
-
-        assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-        saving = response.parse()
-        assert_matches_type(SavingCalculateInterestResponse, saving, path=["response"])
-
-    @parametrize
-    def test_streaming_response_calculate_interest(self, client: Magebank) -> None:
-        with client.savings.with_streaming_response.calculate_interest(
-            amount=1000,
-            days=365,
-        ) as response:
-            assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-
-            saving = response.parse()
-            assert_matches_type(SavingCalculateInterestResponse, saving, path=["response"])
-
-        assert cast(Any, response.is_closed) is True
 
     @parametrize
     def test_method_deposit(self, client: Magebank) -> None:
@@ -191,31 +146,6 @@ class TestSavings:
         assert cast(Any, response.is_closed) is True
 
     @parametrize
-    def test_method_retrieve_interest_rate(self, client: Magebank) -> None:
-        saving = client.savings.retrieve_interest_rate()
-        assert_matches_type(SavingRetrieveInterestRateResponse, saving, path=["response"])
-
-    @parametrize
-    def test_raw_response_retrieve_interest_rate(self, client: Magebank) -> None:
-        response = client.savings.with_raw_response.retrieve_interest_rate()
-
-        assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-        saving = response.parse()
-        assert_matches_type(SavingRetrieveInterestRateResponse, saving, path=["response"])
-
-    @parametrize
-    def test_streaming_response_retrieve_interest_rate(self, client: Magebank) -> None:
-        with client.savings.with_streaming_response.retrieve_interest_rate() as response:
-            assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-
-            saving = response.parse()
-            assert_matches_type(SavingRetrieveInterestRateResponse, saving, path=["response"])
-
-        assert cast(Any, response.is_closed) is True
-
-    @parametrize
     def test_method_withdraw(self, client: Magebank) -> None:
         saving = client.savings.withdraw(
             investment_id="inv_k77NTwxp2Ym3JCmVsKtXQA",
@@ -249,49 +179,6 @@ class TestSavings:
 
 class TestAsyncSavings:
     parametrize = pytest.mark.parametrize("async_client", [False, True], indirect=True, ids=["loose", "strict"])
-
-    @parametrize
-    async def test_method_calculate_interest(self, async_client: AsyncMagebank) -> None:
-        saving = await async_client.savings.calculate_interest(
-            amount=1000,
-            days=365,
-        )
-        assert_matches_type(SavingCalculateInterestResponse, saving, path=["response"])
-
-    @parametrize
-    async def test_method_calculate_interest_with_all_params(self, async_client: AsyncMagebank) -> None:
-        saving = await async_client.savings.calculate_interest(
-            amount=1000,
-            days=365,
-            custom_rate=4.5,
-        )
-        assert_matches_type(SavingCalculateInterestResponse, saving, path=["response"])
-
-    @parametrize
-    async def test_raw_response_calculate_interest(self, async_client: AsyncMagebank) -> None:
-        response = await async_client.savings.with_raw_response.calculate_interest(
-            amount=1000,
-            days=365,
-        )
-
-        assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-        saving = await response.parse()
-        assert_matches_type(SavingCalculateInterestResponse, saving, path=["response"])
-
-    @parametrize
-    async def test_streaming_response_calculate_interest(self, async_client: AsyncMagebank) -> None:
-        async with async_client.savings.with_streaming_response.calculate_interest(
-            amount=1000,
-            days=365,
-        ) as response:
-            assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-
-            saving = await response.parse()
-            assert_matches_type(SavingCalculateInterestResponse, saving, path=["response"])
-
-        assert cast(Any, response.is_closed) is True
 
     @parametrize
     async def test_method_deposit(self, async_client: AsyncMagebank) -> None:
@@ -412,31 +299,6 @@ class TestAsyncSavings:
 
             saving = await response.parse()
             assert_matches_type(SavingRetrieveDashboardResponse, saving, path=["response"])
-
-        assert cast(Any, response.is_closed) is True
-
-    @parametrize
-    async def test_method_retrieve_interest_rate(self, async_client: AsyncMagebank) -> None:
-        saving = await async_client.savings.retrieve_interest_rate()
-        assert_matches_type(SavingRetrieveInterestRateResponse, saving, path=["response"])
-
-    @parametrize
-    async def test_raw_response_retrieve_interest_rate(self, async_client: AsyncMagebank) -> None:
-        response = await async_client.savings.with_raw_response.retrieve_interest_rate()
-
-        assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-        saving = await response.parse()
-        assert_matches_type(SavingRetrieveInterestRateResponse, saving, path=["response"])
-
-    @parametrize
-    async def test_streaming_response_retrieve_interest_rate(self, async_client: AsyncMagebank) -> None:
-        async with async_client.savings.with_streaming_response.retrieve_interest_rate() as response:
-            assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-
-            saving = await response.parse()
-            assert_matches_type(SavingRetrieveInterestRateResponse, saving, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 

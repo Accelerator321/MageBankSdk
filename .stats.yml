@@ -1,4 +1,4 @@
-configured_endpoints: 18
-openapi_spec_url: https://storage.googleapis.com/stainless-sdk-openapi-specs/nucast%2Fmagebank-67c6ea66fc86c7d0ee0c97573e8bc4df6753248306daadc9a5e262aab07e126d.yml
-openapi_spec_hash: 2ac145f0b02b794db19f2e3dcb2138b9
+configured_endpoints: 16
+openapi_spec_url: https://storage.googleapis.com/stainless-sdk-openapi-specs/nucast%2Fmagebank-4a65bf54438bc18a6ed667ab7ddb4044d6b252ecbab9e2efc83cb6b583d7a217.yml
+openapi_spec_hash: eccc1ecfa562d70cbb0cc1edd1761df2
 config_hash: a1822552067f6c44f2352816c9dcabff
