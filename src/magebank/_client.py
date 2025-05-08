@@ -99,7 +99,7 @@ class Magebank(SyncAPIClient):
         if base_url is None:
             base_url = os.environ.get("MAGEBANK_BASE_URL")
         if base_url is None:
-            base_url = f"https://whale-app-bd2b5.ondigitalocean.app"
+            base_url = f"https://api.example.com"
 
         super().__init__(
             version=__version__,
@@ -314,7 +314,7 @@ class AsyncMagebank(AsyncAPIClient):
         if base_url is None:
             base_url = os.environ.get("MAGEBANK_BASE_URL")
         if base_url is None:
-            base_url = f"https://whale-app-bd2b5.ondigitalocean.app"
+            base_url = f"https://api.example.com"
 
         super().__init__(
             version=__version__,

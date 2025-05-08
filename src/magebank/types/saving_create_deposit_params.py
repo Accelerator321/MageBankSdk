@@ -6,10 +6,10 @@ from typing_extensions import Required, Annotated, TypedDict
 
 from .._utils import PropertyInfo
 
-__all__ = ["SavingDepositParams"]
+__all__ = ["SavingCreateDepositParams"]
 
 
-class SavingDepositParams(TypedDict, total=False):
+class SavingCreateDepositParams(TypedDict, total=False):
     agent_id: Required[Annotated[str, PropertyInfo(alias="agentId")]]
     """The short ID or UUID of the agent"""
 

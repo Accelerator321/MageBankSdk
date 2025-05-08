@@ -86,21 +86,21 @@ Types:
 
 ```python
 from magebank.types import (
-    SavingDepositResponse,
-    SavingGetDashboardResponse,
+    SavingCreateDepositResponse,
+    SavingCreateWithdrawalResponse,
     SavingListInvestmentsResponse,
     SavingListInvestmentsByAgentResponse,
-    SavingWithdrawResponse,
+    SavingRetrieveDashboardResponse,
 )
 ```
 
 Methods:
 
-- <code title="post /savings/deposit">client.savings.<a href="./src/magebank/resources/savings.py">deposit</a>(\*\*<a href="src/magebank/types/saving_deposit_params.py">params</a>) -> <a href="./src/magebank/types/saving_deposit_response.py">SavingDepositResponse</a></code>
-- <code title="get /savings/dashboard">client.savings.<a href="./src/magebank/resources/savings.py">get_dashboard</a>() -> <a href="./src/magebank/types/saving_get_dashboard_response.py">SavingGetDashboardResponse</a></code>
+- <code title="post /savings/deposit">client.savings.<a href="./src/magebank/resources/savings.py">create_deposit</a>(\*\*<a href="src/magebank/types/saving_create_deposit_params.py">params</a>) -> <a href="./src/magebank/types/saving_create_deposit_response.py">SavingCreateDepositResponse</a></code>
+- <code title="post /savings/withdraw">client.savings.<a href="./src/magebank/resources/savings.py">create_withdrawal</a>(\*\*<a href="src/magebank/types/saving_create_withdrawal_params.py">params</a>) -> <a href="./src/magebank/types/saving_create_withdrawal_response.py">SavingCreateWithdrawalResponse</a></code>
 - <code title="get /savings/myinvestments">client.savings.<a href="./src/magebank/resources/savings.py">list_investments</a>() -> <a href="./src/magebank/types/saving_list_investments_response.py">SavingListInvestmentsResponse</a></code>
 - <code title="get /savings/{agentId}">client.savings.<a href="./src/magebank/resources/savings.py">list_investments_by_agent</a>(agent_id) -> <a href="./src/magebank/types/saving_list_investments_by_agent_response.py">SavingListInvestmentsByAgentResponse</a></code>
-- <code title="post /savings/withdraw">client.savings.<a href="./src/magebank/resources/savings.py">withdraw</a>(\*\*<a href="src/magebank/types/saving_withdraw_params.py">params</a>) -> <a href="./src/magebank/types/saving_withdraw_response.py">SavingWithdrawResponse</a></code>
+- <code title="get /savings/dashboard">client.savings.<a href="./src/magebank/resources/savings.py">retrieve_dashboard</a>() -> <a href="./src/magebank/types/saving_retrieve_dashboard_response.py">SavingRetrieveDashboardResponse</a></code>
 
 # Transactions
 
