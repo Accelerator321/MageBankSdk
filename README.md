@@ -220,6 +220,87 @@ withdrawal = mage.savings.withdraw(
 print(f"Withdrawal successful: {withdrawal.amount} {withdrawal.currency}")
 ```
 
+### Investment Operations
+
+#### Calculate interest
+```python
+# Calculate interest based on investment parameters
+interest_calculation = mage.investment.calculate_interest(
+    amount=10000,           # Required: amount - number
+    term_months=12,         # Required: term_months - number
+    currency="USD"          # Optional: currency - string
+)
+print(f"Calculated interest: {interest_calculation.interest}")
+print(f"Total return: {interest_calculation.total_return}")
+print(f"APY: {interest_calculation.apy}%")
+```
+
+#### Retrieve current interest rate
+```python
+# Get the current interest rate with no parameters
+interest_rate = mage.investment.retrieve_interest_rate()
+print(f"Current interest rate: {interest_rate.rate}%")
+print(f"Minimum term: {interest_rate.min_term_months} months")
+print(f"Maximum term: {interest_rate.max_term_months} months")
+```
+
+### User Operations
+
+#### List user payments (already included above)
+
+#### Retrieve wallet balance
+```python
+# Get the current wallet balance with no parameters
+wallet = mage.user.retrieve_wallet_balance()
+print(f"Current balance: {wallet.balance} {wallet.currency}")
+print(f"Available balance: {wallet.available_balance} {wallet.currency}")
+```
+
+### Savings Operations (Additional Methods)
+
+#### List all investments
+```python
+# List all investments with no parameters
+investments = mage.savings.list_investments()
+print(f"Total investments: {len(investments.investments)}")
+for investment in investments.investments:
+    print(f"Investment ID: {investment.id}, Amount: {investment.amount} {investment.currency}")
+```
+
+#### List investments by agent
+```python
+# List investments for a specific agent
+agent_investments = mage.savings.list_investments_by_agent(
+    agent_id="agent_12345"  # Required: agent_id - string
+)
+print(f"Agent has {len(agent_investments.investments)} investments")
+for investment in agent_investments.investments:
+    print(f"Investment ID: {investment.id}, Amount: {investment.amount} {investment.currency}")
+```
+
+#### Retrieve savings dashboard
+```python
+# Get savings dashboard overview with no parameters
+dashboard = mage.savings.retrieve_dashboard()
+print(f"Total savings: {dashboard.total_savings} {dashboard.currency}")
+print(f"Total interest earned: {dashboard.total_interest_earned} {dashboard.currency}")
+print(f"Active investments: {dashboard.active_investments_count}")
+```
+
+### Payment Operations (Additional Methods)
+
+#### Retrieve payment details
+```python
+# Get details of a specific payment
+payment = mage.payments.retrieve(
+    "payment_12345"  # Required: id - string
+)
+print(f"Payment: {payment.id}")
+print(f"Status: {payment.status}")
+print(f"Amount: {payment.amount} {payment.currency}")
+print(f"Created: {payment.created_at}")
+```
+
 ### Transaction Operations
 
 #### Get summary of transactions
@@ -236,7 +317,41 @@ print(f"Total volume: {summary.volume} {summary.currency}")
 print(f"Average transaction size: {summary.average}")
 ```
 
-## Using types
+## Available Response Types 
+
+The SDK returns typed response objects for each API call. Here's a list of available types:
+
+```python
+from magebank.types import (
+    # Agent types
+    Agent,
+    AgentCreateResponse,
+    AgentRetrieveResponse,
+    AgentDepositResponse,
+    AgentWithdrawResponse,
+    
+    # Investment types
+    InvestmentCalculateInterestResponse,
+    InvestmentRetrieveInterestRateResponse,
+    
+    # Payment types
+    Payment,
+    PaymentApproveResponse, 
+    PaymentDeclineResponse,
+    PaymentRegisterResponse,
+    
+    # User types
+    UserListPaymentsResponse,
+    UserRetrieveWalletBalanceResponse,
+    
+    # Savings types
+    SavingCreateDepositResponse,
+    SavingCreateWithdrawalResponse,
+    SavingListInvestmentsResponse,
+    SavingListInvestmentsByAgentResponse,
+    SavingRetrieveDashboardResponse
+)
+```
 
 Nested request parameters are [TypedDicts](https://docs.python.org/3/library/typing.html#typing.TypedDict). Responses are [Pydantic models](https://docs.pydantic.dev) which also provide helper methods for things like:
 
@@ -525,6 +640,29 @@ print(magebank.__version__)
 ## Requirements
 
 Python 3.8 or higher.
+
+## Preserving Documentation
+
+This README is manually maintained. To ensure it doesn't get lost during Stainless builds:
+
+1. Store this file in a dedicated location:
+   ```
+   ./docs/custom/magebank-readme.md
+   ```
+
+2. Reference it in your Stainless configuration:
+   ```yaml
+   # stainless.yaml
+   readme:
+     path: "./docs/custom/magebank-readme.md"
+   ```
+
+3. Add this file to version control:
+   ```
+   git add ./docs/custom/magebank-readme.md
+   ```
+
+These steps will ensure your custom documentation persists across builds.
 
 ## Contributing
 
