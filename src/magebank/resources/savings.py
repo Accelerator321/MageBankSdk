@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import httpx
 
-from ..types import saving_deposit_params, saving_withdraw_params
+from ..types import saving_create_deposit_params, saving_create_withdrawal_params
 from .._types import NOT_GIVEN, Body, Query, Headers, NotGiven
 from .._utils import maybe_transform, async_maybe_transform
 from .._compat import cached_property
@@ -16,10 +16,10 @@ from .._response import (
     async_to_streamed_response_wrapper,
 )
 from .._base_client import make_request_options
-from ..types.saving_deposit_response import SavingDepositResponse
-from ..types.saving_withdraw_response import SavingWithdrawResponse
-from ..types.saving_get_dashboard_response import SavingGetDashboardResponse
+from ..types.saving_create_deposit_response import SavingCreateDepositResponse
 from ..types.saving_list_investments_response import SavingListInvestmentsResponse
+from ..types.saving_create_withdrawal_response import SavingCreateWithdrawalResponse
+from ..types.saving_retrieve_dashboard_response import SavingRetrieveDashboardResponse
 from ..types.saving_list_investments_by_agent_response import SavingListInvestmentsByAgentResponse
 
 __all__ = ["SavingsResource", "AsyncSavingsResource"]
@@ -45,7 +45,7 @@ class SavingsResource(SyncAPIResource):
         """
         return SavingsResourceWithStreamingResponse(self)
 
-    def deposit(
+    def create_deposit(
         self,
         *,
         agent_id: str,
@@ -56,7 +56,7 @@ class SavingsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> SavingDepositResponse:
+    ) -> SavingCreateDepositResponse:
         """
         Creates a new investment by depositing funds into an agent's savings account.
         The operation converts the agent ID to UUID format if provided in short format,
@@ -82,38 +82,51 @@ class SavingsResource(SyncAPIResource):
                     "agent_id": agent_id,
                     "amount": amount,
                 },
-                saving_deposit_params.SavingDepositParams,
+                saving_create_deposit_params.SavingCreateDepositParams,
             ),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=SavingDepositResponse,
+            cast_to=SavingCreateDepositResponse,
         )
 
-    def get_dashboard(
+    def create_withdrawal(
         self,
         *,
+        investment_id: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> SavingGetDashboardResponse:
-        """Provides a comprehensive overview of the user's savings portfolio.
+    ) -> SavingCreateWithdrawalResponse:
+        """Closes an active investment and returns funds to the user's account.
 
-        Includes
-        total savings, current interest rate, total invested amount, one-year
-        projection, and detailed information about investments by agent. Calculates
-        real-time investment values based on the current interest rate and the exact
-        duration of each investment.
+        The
+        operation validates the investment ID, converts it to UUID format if needed, and
+        processes the withdrawal by updating the investment status.
+
+        Args:
+          investment_id: The short ID or UUID of the investment
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
         """
-        return self._get(
-            "/savings/dashboard",
+        return self._post(
+            "/savings/withdraw",
+            body=maybe_transform(
+                {"investment_id": investment_id}, saving_create_withdrawal_params.SavingCreateWithdrawalParams
+            ),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=SavingGetDashboardResponse,
+            cast_to=SavingCreateWithdrawalResponse,
         )
 
     def list_investments(
@@ -177,41 +190,30 @@ class SavingsResource(SyncAPIResource):
             cast_to=SavingListInvestmentsByAgentResponse,
         )
 
-    def withdraw(
+    def retrieve_dashboard(
         self,
         *,
-        investment_id: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> SavingWithdrawResponse:
-        """Closes an active investment and returns funds to the user's account.
+    ) -> SavingRetrieveDashboardResponse:
+        """Provides a comprehensive overview of the user's savings portfolio.
 
-        The
-        operation validates the investment ID, converts it to UUID format if needed, and
-        processes the withdrawal by updating the investment status.
-
-        Args:
-          investment_id: The short ID or UUID of the investment
-
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
+        Includes
+        total savings, current interest rate, total invested amount, one-year
+        projection, and detailed information about investments by agent. Calculates
+        real-time investment values based on the current interest rate and the exact
+        duration of each investment.
         """
-        return self._post(
-            "/savings/withdraw",
-            body=maybe_transform({"investment_id": investment_id}, saving_withdraw_params.SavingWithdrawParams),
+        return self._get(
+            "/savings/dashboard",
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=SavingWithdrawResponse,
+            cast_to=SavingRetrieveDashboardResponse,
         )
 
 
@@ -235,7 +237,7 @@ class AsyncSavingsResource(AsyncAPIResource):
         """
         return AsyncSavingsResourceWithStreamingResponse(self)
 
-    async def deposit(
+    async def create_deposit(
         self,
         *,
         agent_id: str,
@@ -246,7 +248,7 @@ class AsyncSavingsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> SavingDepositResponse:
+    ) -> SavingCreateDepositResponse:
         """
         Creates a new investment by depositing funds into an agent's savings account.
         The operation converts the agent ID to UUID format if provided in short format,
@@ -272,38 +274,51 @@ class AsyncSavingsResource(AsyncAPIResource):
                     "agent_id": agent_id,
                     "amount": amount,
                 },
-                saving_deposit_params.SavingDepositParams,
+                saving_create_deposit_params.SavingCreateDepositParams,
             ),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=SavingDepositResponse,
+            cast_to=SavingCreateDepositResponse,
         )
 
-    async def get_dashboard(
+    async def create_withdrawal(
         self,
         *,
+        investment_id: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> SavingGetDashboardResponse:
-        """Provides a comprehensive overview of the user's savings portfolio.
+    ) -> SavingCreateWithdrawalResponse:
+        """Closes an active investment and returns funds to the user's account.
 
-        Includes
-        total savings, current interest rate, total invested amount, one-year
-        projection, and detailed information about investments by agent. Calculates
-        real-time investment values based on the current interest rate and the exact
-        duration of each investment.
+        The
+        operation validates the investment ID, converts it to UUID format if needed, and
+        processes the withdrawal by updating the investment status.
+
+        Args:
+          investment_id: The short ID or UUID of the investment
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
         """
-        return await self._get(
-            "/savings/dashboard",
+        return await self._post(
+            "/savings/withdraw",
+            body=await async_maybe_transform(
+                {"investment_id": investment_id}, saving_create_withdrawal_params.SavingCreateWithdrawalParams
+            ),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=SavingGetDashboardResponse,
+            cast_to=SavingCreateWithdrawalResponse,
         )
 
     async def list_investments(
@@ -367,43 +382,30 @@ class AsyncSavingsResource(AsyncAPIResource):
             cast_to=SavingListInvestmentsByAgentResponse,
         )
 
-    async def withdraw(
+    async def retrieve_dashboard(
         self,
         *,
-        investment_id: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> SavingWithdrawResponse:
-        """Closes an active investment and returns funds to the user's account.
+    ) -> SavingRetrieveDashboardResponse:
+        """Provides a comprehensive overview of the user's savings portfolio.
 
-        The
-        operation validates the investment ID, converts it to UUID format if needed, and
-        processes the withdrawal by updating the investment status.
-
-        Args:
-          investment_id: The short ID or UUID of the investment
-
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
+        Includes
+        total savings, current interest rate, total invested amount, one-year
+        projection, and detailed information about investments by agent. Calculates
+        real-time investment values based on the current interest rate and the exact
+        duration of each investment.
         """
-        return await self._post(
-            "/savings/withdraw",
-            body=await async_maybe_transform(
-                {"investment_id": investment_id}, saving_withdraw_params.SavingWithdrawParams
-            ),
+        return await self._get(
+            "/savings/dashboard",
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=SavingWithdrawResponse,
+            cast_to=SavingRetrieveDashboardResponse,
         )
 
 
@@ -411,11 +413,11 @@ class SavingsResourceWithRawResponse:
     def __init__(self, savings: SavingsResource) -> None:
         self._savings = savings
 
-        self.deposit = to_raw_response_wrapper(
-            savings.deposit,
+        self.create_deposit = to_raw_response_wrapper(
+            savings.create_deposit,
         )
-        self.get_dashboard = to_raw_response_wrapper(
-            savings.get_dashboard,
+        self.create_withdrawal = to_raw_response_wrapper(
+            savings.create_withdrawal,
         )
         self.list_investments = to_raw_response_wrapper(
             savings.list_investments,
@@ -423,8 +425,8 @@ class SavingsResourceWithRawResponse:
         self.list_investments_by_agent = to_raw_response_wrapper(
             savings.list_investments_by_agent,
         )
-        self.withdraw = to_raw_response_wrapper(
-            savings.withdraw,
+        self.retrieve_dashboard = to_raw_response_wrapper(
+            savings.retrieve_dashboard,
         )
 
 
@@ -432,11 +434,11 @@ class AsyncSavingsResourceWithRawResponse:
     def __init__(self, savings: AsyncSavingsResource) -> None:
         self._savings = savings
 
-        self.deposit = async_to_raw_response_wrapper(
-            savings.deposit,
+        self.create_deposit = async_to_raw_response_wrapper(
+            savings.create_deposit,
         )
-        self.get_dashboard = async_to_raw_response_wrapper(
-            savings.get_dashboard,
+        self.create_withdrawal = async_to_raw_response_wrapper(
+            savings.create_withdrawal,
         )
         self.list_investments = async_to_raw_response_wrapper(
             savings.list_investments,
@@ -444,8 +446,8 @@ class AsyncSavingsResourceWithRawResponse:
         self.list_investments_by_agent = async_to_raw_response_wrapper(
             savings.list_investments_by_agent,
         )
-        self.withdraw = async_to_raw_response_wrapper(
-            savings.withdraw,
+        self.retrieve_dashboard = async_to_raw_response_wrapper(
+            savings.retrieve_dashboard,
         )
 
 
@@ -453,11 +455,11 @@ class SavingsResourceWithStreamingResponse:
     def __init__(self, savings: SavingsResource) -> None:
         self._savings = savings
 
-        self.deposit = to_streamed_response_wrapper(
-            savings.deposit,
+        self.create_deposit = to_streamed_response_wrapper(
+            savings.create_deposit,
         )
-        self.get_dashboard = to_streamed_response_wrapper(
-            savings.get_dashboard,
+        self.create_withdrawal = to_streamed_response_wrapper(
+            savings.create_withdrawal,
         )
         self.list_investments = to_streamed_response_wrapper(
             savings.list_investments,
@@ -465,8 +467,8 @@ class SavingsResourceWithStreamingResponse:
         self.list_investments_by_agent = to_streamed_response_wrapper(
             savings.list_investments_by_agent,
         )
-        self.withdraw = to_streamed_response_wrapper(
-            savings.withdraw,
+        self.retrieve_dashboard = to_streamed_response_wrapper(
+            savings.retrieve_dashboard,
         )
 
 
@@ -474,11 +476,11 @@ class AsyncSavingsResourceWithStreamingResponse:
     def __init__(self, savings: AsyncSavingsResource) -> None:
         self._savings = savings
 
-        self.deposit = async_to_streamed_response_wrapper(
-            savings.deposit,
+        self.create_deposit = async_to_streamed_response_wrapper(
+            savings.create_deposit,
         )
-        self.get_dashboard = async_to_streamed_response_wrapper(
-            savings.get_dashboard,
+        self.create_withdrawal = async_to_streamed_response_wrapper(
+            savings.create_withdrawal,
         )
         self.list_investments = async_to_streamed_response_wrapper(
             savings.list_investments,
@@ -486,6 +488,6 @@ class AsyncSavingsResourceWithStreamingResponse:
         self.list_investments_by_agent = async_to_streamed_response_wrapper(
             savings.list_investments_by_agent,
         )
-        self.withdraw = async_to_streamed_response_wrapper(
-            savings.withdraw,
+        self.retrieve_dashboard = async_to_streamed_response_wrapper(
+            savings.retrieve_dashboard,
         )
