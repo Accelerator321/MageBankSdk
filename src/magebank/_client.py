@@ -13,7 +13,6 @@ from ._qs import Querystring
 from ._types import (
     NOT_GIVEN,
     Omit,
-    Headers,
     Timeout,
     NotGiven,
     Transport,
@@ -22,9 +21,9 @@ from ._types import (
 )
 from ._utils import is_given, get_async_library
 from ._version import __version__
-from .resources import user, agents, savings, payments, agents_with
+from .resources import user, agents, savings, payments, investment, agents_with, transactions
 from ._streaming import Stream as Stream, AsyncStream as AsyncStream
-from ._exceptions import APIStatusError
+from ._exceptions import MagebankError, APIStatusError
 from ._base_client import (
     DEFAULT_MAX_RETRIES,
     SyncAPIClient,
@@ -46,21 +45,23 @@ __all__ = [
 class Magebank(SyncAPIClient):
     agents_with: agents_with.AgentsWithResource
     agents: agents.AgentsResource
-    savings: savings.SavingsResource
+    investment: investment.InvestmentResource
     payments: payments.PaymentsResource
     user: user.UserResource
+    savings: savings.SavingsResource
+    transactions: transactions.TransactionsResource
     with_raw_response: MagebankWithRawResponse
     with_streaming_response: MagebankWithStreamedResponse
 
     # client options
-    api_key: str | None
-    auth_token: str | None
+    bearer_token: str
+    api_key: str
 
     def __init__(
         self,
         *,
+        bearer_token: str | None = None,
         api_key: str | None = None,
-        auth_token: str | None = None,
         base_url: str | httpx.URL | None = None,
         timeout: Union[float, Timeout, None, NotGiven] = NOT_GIVEN,
         max_retries: int = DEFAULT_MAX_RETRIES,
@@ -83,21 +84,29 @@ class Magebank(SyncAPIClient):
         """Construct a new synchronous Magebank client instance.
 
         This automatically infers the following arguments from their corresponding environment variables if they are not provided:
+        - `bearer_token` from `MAGEBANK_BEARER_TOKEN`
         - `api_key` from `MAGEBANK_API_KEY`
-        - `auth_token` from `MAGEBANK_AUTH_TOKENOptional environment variable`
         """
+        if bearer_token is None:
+            bearer_token = os.environ.get("MAGEBANK_BEARER_TOKEN")
+        if bearer_token is None:
+            raise MagebankError(
+                "The bearer_token client option must be set either by passing bearer_token to the client or by setting the MAGEBANK_BEARER_TOKEN environment variable"
+            )
+        self.bearer_token = bearer_token
+
         if api_key is None:
             api_key = os.environ.get("MAGEBANK_API_KEY")
+        if api_key is None:
+            raise MagebankError(
+                "The api_key client option must be set either by passing api_key to the client or by setting the MAGEBANK_API_KEY environment variable"
+            )
         self.api_key = api_key
-
-        if auth_token is None:
-            auth_token = os.environ.get("MAGEBANK_AUTH_TOKENOptional environment variable")
-        self.auth_token = auth_token
 
         if base_url is None:
             base_url = os.environ.get("MAGEBANK_BASE_URL")
         if base_url is None:
-            base_url = f"https://whale-app-bd2b5.ondigitalocean.app/"
+            base_url = f"https://whale-app-bd2b5.ondigitalocean.app"
 
         super().__init__(
             version=__version__,
@@ -112,9 +121,11 @@ class Magebank(SyncAPIClient):
 
         self.agents_with = agents_with.AgentsWithResource(self)
         self.agents = agents.AgentsResource(self)
-        self.savings = savings.SavingsResource(self)
+        self.investment = investment.InvestmentResource(self)
         self.payments = payments.PaymentsResource(self)
         self.user = user.UserResource(self)
+        self.savings = savings.SavingsResource(self)
+        self.transactions = transactions.TransactionsResource(self)
         self.with_raw_response = MagebankWithRawResponse(self)
         self.with_streaming_response = MagebankWithStreamedResponse(self)
 
@@ -130,16 +141,12 @@ class Magebank(SyncAPIClient):
 
     @property
     def _bearer_auth(self) -> dict[str, str]:
-        auth_token = self.auth_token
-        if auth_token is None:
-            return {}
-        return {"Authorization": f"Bearer {auth_token}"}
+        bearer_token = self.bearer_token
+        return {"Authorization": f"Bearer {bearer_token}"}
 
     @property
     def _api_key_auth(self) -> dict[str, str]:
         api_key = self.api_key
-        if api_key is None:
-            return {}
         return {"x-api-key": api_key}
 
     @property
@@ -151,27 +158,11 @@ class Magebank(SyncAPIClient):
             **self._custom_headers,
         }
 
-    @override
-    def _validate_headers(self, headers: Headers, custom_headers: Headers) -> None:
-        if self.auth_token and headers.get("Authorization"):
-            return
-        if isinstance(custom_headers.get("Authorization"), Omit):
-            return
-
-        if self.api_key and headers.get("x-api-key"):
-            return
-        if isinstance(custom_headers.get("x-api-key"), Omit):
-            return
-
-        raise TypeError(
-            '"Could not resolve authentication method. Expected either auth_token or api_key to be set. Or for one of the `Authorization` or `x-api-key` headers to be explicitly omitted"'
-        )
-
     def copy(
         self,
         *,
+        bearer_token: str | None = None,
         api_key: str | None = None,
-        auth_token: str | None = None,
         base_url: str | httpx.URL | None = None,
         timeout: float | Timeout | None | NotGiven = NOT_GIVEN,
         http_client: httpx.Client | None = None,
@@ -205,8 +196,8 @@ class Magebank(SyncAPIClient):
 
         http_client = http_client or self._client
         return self.__class__(
+            bearer_token=bearer_token or self.bearer_token,
             api_key=api_key or self.api_key,
-            auth_token=auth_token or self.auth_token,
             base_url=base_url or self.base_url,
             timeout=self.timeout if isinstance(timeout, NotGiven) else timeout,
             http_client=http_client,
@@ -257,21 +248,23 @@ class Magebank(SyncAPIClient):
 class AsyncMagebank(AsyncAPIClient):
     agents_with: agents_with.AsyncAgentsWithResource
     agents: agents.AsyncAgentsResource
-    savings: savings.AsyncSavingsResource
+    investment: investment.AsyncInvestmentResource
     payments: payments.AsyncPaymentsResource
     user: user.AsyncUserResource
+    savings: savings.AsyncSavingsResource
+    transactions: transactions.AsyncTransactionsResource
     with_raw_response: AsyncMagebankWithRawResponse
     with_streaming_response: AsyncMagebankWithStreamedResponse
 
     # client options
-    api_key: str | None
-    auth_token: str | None
+    bearer_token: str
+    api_key: str
 
     def __init__(
         self,
         *,
+        bearer_token: str | None = None,
         api_key: str | None = None,
-        auth_token: str | None = None,
         base_url: str | httpx.URL | None = None,
         timeout: Union[float, Timeout, None, NotGiven] = NOT_GIVEN,
         max_retries: int = DEFAULT_MAX_RETRIES,
@@ -294,21 +287,29 @@ class AsyncMagebank(AsyncAPIClient):
         """Construct a new async AsyncMagebank client instance.
 
         This automatically infers the following arguments from their corresponding environment variables if they are not provided:
+        - `bearer_token` from `MAGEBANK_BEARER_TOKEN`
         - `api_key` from `MAGEBANK_API_KEY`
-        - `auth_token` from `MAGEBANK_AUTH_TOKENOptional environment variable`
         """
+        if bearer_token is None:
+            bearer_token = os.environ.get("MAGEBANK_BEARER_TOKEN")
+        if bearer_token is None:
+            raise MagebankError(
+                "The bearer_token client option must be set either by passing bearer_token to the client or by setting the MAGEBANK_BEARER_TOKEN environment variable"
+            )
+        self.bearer_token = bearer_token
+
         if api_key is None:
             api_key = os.environ.get("MAGEBANK_API_KEY")
+        if api_key is None:
+            raise MagebankError(
+                "The api_key client option must be set either by passing api_key to the client or by setting the MAGEBANK_API_KEY environment variable"
+            )
         self.api_key = api_key
-
-        if auth_token is None:
-            auth_token = os.environ.get("MAGEBANK_AUTH_TOKENOptional environment variable")
-        self.auth_token = auth_token
 
         if base_url is None:
             base_url = os.environ.get("MAGEBANK_BASE_URL")
         if base_url is None:
-            base_url = f"https://whale-app-bd2b5.ondigitalocean.app/"
+            base_url = f"https://whale-app-bd2b5.ondigitalocean.app"
 
         super().__init__(
             version=__version__,
@@ -323,9 +324,11 @@ class AsyncMagebank(AsyncAPIClient):
 
         self.agents_with = agents_with.AsyncAgentsWithResource(self)
         self.agents = agents.AsyncAgentsResource(self)
-        self.savings = savings.AsyncSavingsResource(self)
+        self.investment = investment.AsyncInvestmentResource(self)
         self.payments = payments.AsyncPaymentsResource(self)
         self.user = user.AsyncUserResource(self)
+        self.savings = savings.AsyncSavingsResource(self)
+        self.transactions = transactions.AsyncTransactionsResource(self)
         self.with_raw_response = AsyncMagebankWithRawResponse(self)
         self.with_streaming_response = AsyncMagebankWithStreamedResponse(self)
 
@@ -341,16 +344,12 @@ class AsyncMagebank(AsyncAPIClient):
 
     @property
     def _bearer_auth(self) -> dict[str, str]:
-        auth_token = self.auth_token
-        if auth_token is None:
-            return {}
-        return {"Authorization": f"Bearer {auth_token}"}
+        bearer_token = self.bearer_token
+        return {"Authorization": f"Bearer {bearer_token}"}
 
     @property
     def _api_key_auth(self) -> dict[str, str]:
         api_key = self.api_key
-        if api_key is None:
-            return {}
         return {"x-api-key": api_key}
 
     @property
@@ -362,27 +361,11 @@ class AsyncMagebank(AsyncAPIClient):
             **self._custom_headers,
         }
 
-    @override
-    def _validate_headers(self, headers: Headers, custom_headers: Headers) -> None:
-        if self.auth_token and headers.get("Authorization"):
-            return
-        if isinstance(custom_headers.get("Authorization"), Omit):
-            return
-
-        if self.api_key and headers.get("x-api-key"):
-            return
-        if isinstance(custom_headers.get("x-api-key"), Omit):
-            return
-
-        raise TypeError(
-            '"Could not resolve authentication method. Expected either auth_token or api_key to be set. Or for one of the `Authorization` or `x-api-key` headers to be explicitly omitted"'
-        )
-
     def copy(
         self,
         *,
+        bearer_token: str | None = None,
         api_key: str | None = None,
-        auth_token: str | None = None,
         base_url: str | httpx.URL | None = None,
         timeout: float | Timeout | None | NotGiven = NOT_GIVEN,
         http_client: httpx.AsyncClient | None = None,
@@ -416,8 +399,8 @@ class AsyncMagebank(AsyncAPIClient):
 
         http_client = http_client or self._client
         return self.__class__(
+            bearer_token=bearer_token or self.bearer_token,
             api_key=api_key or self.api_key,
-            auth_token=auth_token or self.auth_token,
             base_url=base_url or self.base_url,
             timeout=self.timeout if isinstance(timeout, NotGiven) else timeout,
             http_client=http_client,
@@ -469,36 +452,44 @@ class MagebankWithRawResponse:
     def __init__(self, client: Magebank) -> None:
         self.agents_with = agents_with.AgentsWithResourceWithRawResponse(client.agents_with)
         self.agents = agents.AgentsResourceWithRawResponse(client.agents)
-        self.savings = savings.SavingsResourceWithRawResponse(client.savings)
+        self.investment = investment.InvestmentResourceWithRawResponse(client.investment)
         self.payments = payments.PaymentsResourceWithRawResponse(client.payments)
         self.user = user.UserResourceWithRawResponse(client.user)
+        self.savings = savings.SavingsResourceWithRawResponse(client.savings)
+        self.transactions = transactions.TransactionsResourceWithRawResponse(client.transactions)
 
 
 class AsyncMagebankWithRawResponse:
     def __init__(self, client: AsyncMagebank) -> None:
         self.agents_with = agents_with.AsyncAgentsWithResourceWithRawResponse(client.agents_with)
         self.agents = agents.AsyncAgentsResourceWithRawResponse(client.agents)
-        self.savings = savings.AsyncSavingsResourceWithRawResponse(client.savings)
+        self.investment = investment.AsyncInvestmentResourceWithRawResponse(client.investment)
         self.payments = payments.AsyncPaymentsResourceWithRawResponse(client.payments)
         self.user = user.AsyncUserResourceWithRawResponse(client.user)
+        self.savings = savings.AsyncSavingsResourceWithRawResponse(client.savings)
+        self.transactions = transactions.AsyncTransactionsResourceWithRawResponse(client.transactions)
 
 
 class MagebankWithStreamedResponse:
     def __init__(self, client: Magebank) -> None:
         self.agents_with = agents_with.AgentsWithResourceWithStreamingResponse(client.agents_with)
         self.agents = agents.AgentsResourceWithStreamingResponse(client.agents)
-        self.savings = savings.SavingsResourceWithStreamingResponse(client.savings)
+        self.investment = investment.InvestmentResourceWithStreamingResponse(client.investment)
         self.payments = payments.PaymentsResourceWithStreamingResponse(client.payments)
         self.user = user.UserResourceWithStreamingResponse(client.user)
+        self.savings = savings.SavingsResourceWithStreamingResponse(client.savings)
+        self.transactions = transactions.TransactionsResourceWithStreamingResponse(client.transactions)
 
 
 class AsyncMagebankWithStreamedResponse:
     def __init__(self, client: AsyncMagebank) -> None:
         self.agents_with = agents_with.AsyncAgentsWithResourceWithStreamingResponse(client.agents_with)
         self.agents = agents.AsyncAgentsResourceWithStreamingResponse(client.agents)
-        self.savings = savings.AsyncSavingsResourceWithStreamingResponse(client.savings)
+        self.investment = investment.AsyncInvestmentResourceWithStreamingResponse(client.investment)
         self.payments = payments.AsyncPaymentsResourceWithStreamingResponse(client.payments)
         self.user = user.AsyncUserResourceWithStreamingResponse(client.user)
+        self.savings = savings.AsyncSavingsResourceWithStreamingResponse(client.savings)
+        self.transactions = transactions.AsyncTransactionsResourceWithStreamingResponse(client.transactions)
 
 
 Client = Magebank

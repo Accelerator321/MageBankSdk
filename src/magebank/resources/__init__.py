@@ -32,6 +32,14 @@ from .payments import (
     PaymentsResourceWithStreamingResponse,
     AsyncPaymentsResourceWithStreamingResponse,
 )
+from .investment import (
+    InvestmentResource,
+    AsyncInvestmentResource,
+    InvestmentResourceWithRawResponse,
+    AsyncInvestmentResourceWithRawResponse,
+    InvestmentResourceWithStreamingResponse,
+    AsyncInvestmentResourceWithStreamingResponse,
+)
 from .agents_with import (
     AgentsWithResource,
     AsyncAgentsWithResource,
@@ -39,6 +47,14 @@ from .agents_with import (
     AsyncAgentsWithResourceWithRawResponse,
     AgentsWithResourceWithStreamingResponse,
     AsyncAgentsWithResourceWithStreamingResponse,
+)
+from .transactions import (
+    TransactionsResource,
+    AsyncTransactionsResource,
+    TransactionsResourceWithRawResponse,
+    AsyncTransactionsResourceWithRawResponse,
+    TransactionsResourceWithStreamingResponse,
+    AsyncTransactionsResourceWithStreamingResponse,
 )
 
 __all__ = [
@@ -54,12 +70,12 @@ __all__ = [
     "AsyncAgentsResourceWithRawResponse",
     "AgentsResourceWithStreamingResponse",
     "AsyncAgentsResourceWithStreamingResponse",
-    "SavingsResource",
-    "AsyncSavingsResource",
-    "SavingsResourceWithRawResponse",
-    "AsyncSavingsResourceWithRawResponse",
-    "SavingsResourceWithStreamingResponse",
-    "AsyncSavingsResourceWithStreamingResponse",
+    "InvestmentResource",
+    "AsyncInvestmentResource",
+    "InvestmentResourceWithRawResponse",
+    "AsyncInvestmentResourceWithRawResponse",
+    "InvestmentResourceWithStreamingResponse",
+    "AsyncInvestmentResourceWithStreamingResponse",
     "PaymentsResource",
     "AsyncPaymentsResource",
     "PaymentsResourceWithRawResponse",
@@ -72,4 +88,16 @@ __all__ = [
     "AsyncUserResourceWithRawResponse",
     "UserResourceWithStreamingResponse",
     "AsyncUserResourceWithStreamingResponse",
+    "SavingsResource",
+    "AsyncSavingsResource",
+    "SavingsResourceWithRawResponse",
+    "AsyncSavingsResourceWithRawResponse",
+    "SavingsResourceWithStreamingResponse",
+    "AsyncSavingsResourceWithStreamingResponse",
+    "TransactionsResource",
+    "AsyncTransactionsResource",
+    "TransactionsResourceWithRawResponse",
+    "AsyncTransactionsResourceWithRawResponse",
+    "TransactionsResourceWithStreamingResponse",
+    "AsyncTransactionsResourceWithStreamingResponse",
 ]
