@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing_extensions import Literal, Annotated, TypedDict
+from typing_extensions import Annotated, TypedDict
 
 from .._utils import PropertyInfo
 
@@ -10,5 +10,5 @@ __all__ = ["UserListPaymentsParams"]
 
 
 class UserListPaymentsParams(TypedDict, total=False):
-    approval_status: Annotated[Literal["Waiting", "Approved", "Decline"], PropertyInfo(alias="approvalStatus")]
+    approval_status: Annotated[str, PropertyInfo(alias="approvalStatus")]
     """Filter payments by approval status"""

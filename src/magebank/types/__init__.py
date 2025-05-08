@@ -23,15 +23,10 @@ from .saving_withdraw_response import SavingWithdrawResponse as SavingWithdrawRe
 from .payment_register_response import PaymentRegisterResponse as PaymentRegisterResponse
 from .user_list_payments_params import UserListPaymentsParams as UserListPaymentsParams
 from .user_list_payments_response import UserListPaymentsResponse as UserListPaymentsResponse
-from .saving_calculate_interest_params import SavingCalculateInterestParams as SavingCalculateInterestParams
 from .saving_list_investments_response import SavingListInvestmentsResponse as SavingListInvestmentsResponse
-from .saving_calculate_interest_response import SavingCalculateInterestResponse as SavingCalculateInterestResponse
 from .saving_retrieve_dashboard_response import SavingRetrieveDashboardResponse as SavingRetrieveDashboardResponse
 from .user_retrieve_wallet_balance_response import (
     UserRetrieveWalletBalanceResponse as UserRetrieveWalletBalanceResponse,
-)
-from .saving_retrieve_interest_rate_response import (
-    SavingRetrieveInterestRateResponse as SavingRetrieveInterestRateResponse,
 )
 from .saving_list_investments_by_agent_response import (
     SavingListInvestmentsByAgentResponse as SavingListInvestmentsByAgentResponse,

@@ -25,7 +25,7 @@ class TestUser:
     @parametrize
     def test_method_list_payments_with_all_params(self, client: Magebank) -> None:
         user = client.user.list_payments(
-            approval_status="Waiting",
+            approval_status="approvalStatus",
         )
         assert_matches_type(UserListPaymentsResponse, user, path=["response"])
 
@@ -86,7 +86,7 @@ class TestAsyncUser:
     @parametrize
     async def test_method_list_payments_with_all_params(self, async_client: AsyncMagebank) -> None:
         user = await async_client.user.list_payments(
-            approval_status="Waiting",
+            approval_status="approvalStatus",
         )
         assert_matches_type(UserListPaymentsResponse, user, path=["response"])
 
