@@ -4,10 +4,10 @@ from typing import Optional
 
 from .._models import BaseModel
 
-__all__ = ["SavingWithdrawResponse"]
+__all__ = ["SavingCreateDepositResponse"]
 
 
-class SavingWithdrawResponse(BaseModel):
+class SavingCreateDepositResponse(BaseModel):
     message: Optional[str] = None
 
     success: Optional[bool] = None

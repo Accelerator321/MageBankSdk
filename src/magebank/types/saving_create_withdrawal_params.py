@@ -6,9 +6,9 @@ from typing_extensions import Required, Annotated, TypedDict
 
 from .._utils import PropertyInfo
 
-__all__ = ["SavingWithdrawParams"]
+__all__ = ["SavingCreateWithdrawalParams"]
 
 
-class SavingWithdrawParams(TypedDict, total=False):
+class SavingCreateWithdrawalParams(TypedDict, total=False):
     investment_id: Required[Annotated[str, PropertyInfo(alias="investmentId")]]
     """The short ID or UUID of the investment"""
