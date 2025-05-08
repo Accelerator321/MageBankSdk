@@ -7,10 +7,10 @@ from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
 
-__all__ = ["SavingRetrieveInterestRateResponse"]
+__all__ = ["InvestmentRetrieveInterestRateResponse"]
 
 
-class SavingRetrieveInterestRateResponse(BaseModel):
+class InvestmentRetrieveInterestRateResponse(BaseModel):
     interest_rate: Optional[float] = FieldInfo(alias="interestRate", default=None)
     """Current annual interest rate for investments"""
 

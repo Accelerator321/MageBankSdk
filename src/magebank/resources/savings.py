@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import httpx
 
-from ..types import saving_deposit_params, saving_withdraw_params, saving_calculate_interest_params
+from ..types import saving_deposit_params, saving_withdraw_params
 from .._types import NOT_GIVEN, Body, Query, Headers, NotGiven
 from .._utils import maybe_transform, async_maybe_transform
 from .._compat import cached_property
@@ -18,10 +18,8 @@ from .._response import (
 from .._base_client import make_request_options
 from ..types.saving_deposit_response import SavingDepositResponse
 from ..types.saving_withdraw_response import SavingWithdrawResponse
+from ..types.saving_get_dashboard_response import SavingGetDashboardResponse
 from ..types.saving_list_investments_response import SavingListInvestmentsResponse
-from ..types.saving_calculate_interest_response import SavingCalculateInterestResponse
-from ..types.saving_retrieve_dashboard_response import SavingRetrieveDashboardResponse
-from ..types.saving_retrieve_interest_rate_response import SavingRetrieveInterestRateResponse
 from ..types.saving_list_investments_by_agent_response import SavingListInvestmentsByAgentResponse
 
 __all__ = ["SavingsResource", "AsyncSavingsResource"]
@@ -46,56 +44,6 @@ class SavingsResource(SyncAPIResource):
         For more information, see https://www.github.com/Accelerator321/MageBankSdk#with_streaming_response
         """
         return SavingsResourceWithStreamingResponse(self)
-
-    def calculate_interest(
-        self,
-        *,
-        amount: float,
-        days: float,
-        custom_rate: float | NotGiven = NOT_GIVEN,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> SavingCalculateInterestResponse:
-        """
-        Calculates the potential interest earned for a given investment amount and
-        period. Uses the platform's current interest rate by default, but allows
-        specifying a custom rate for scenario planning. Returns detailed breakdown of
-        the calculation with step-by-step formula application.
-
-        Args:
-          amount: Principal amount to invest
-
-          days: Investment duration in days
-
-          custom_rate: Optional custom interest rate (annual percentage)
-
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        return self._post(
-            "/savings/calculator",
-            body=maybe_transform(
-                {
-                    "amount": amount,
-                    "days": days,
-                    "custom_rate": custom_rate,
-                },
-                saving_calculate_interest_params.SavingCalculateInterestParams,
-            ),
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=SavingCalculateInterestResponse,
-        )
 
     def deposit(
         self,
@@ -140,6 +88,32 @@ class SavingsResource(SyncAPIResource):
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=SavingDepositResponse,
+        )
+
+    def get_dashboard(
+        self,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> SavingGetDashboardResponse:
+        """Provides a comprehensive overview of the user's savings portfolio.
+
+        Includes
+        total savings, current interest rate, total invested amount, one-year
+        projection, and detailed information about investments by agent. Calculates
+        real-time investment values based on the current interest rate and the exact
+        duration of each investment.
+        """
+        return self._get(
+            "/savings/dashboard",
+            options=make_request_options(
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+            ),
+            cast_to=SavingGetDashboardResponse,
         )
 
     def list_investments(
@@ -203,55 +177,6 @@ class SavingsResource(SyncAPIResource):
             cast_to=SavingListInvestmentsByAgentResponse,
         )
 
-    def retrieve_dashboard(
-        self,
-        *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> SavingRetrieveDashboardResponse:
-        """Provides a comprehensive overview of the user's savings portfolio.
-
-        Includes
-        total savings, current interest rate, total invested amount, one-year
-        projection, and detailed information about investments by agent. Calculates
-        real-time investment values based on the current interest rate and the exact
-        duration of each investment.
-        """
-        return self._get(
-            "/savings/dashboard",
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=SavingRetrieveDashboardResponse,
-        )
-
-    def retrieve_interest_rate(
-        self,
-        *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> SavingRetrieveInterestRateResponse:
-        """
-        Retrieves the current annual interest rate for investments and the timestamp
-        when it was last updated. This rate is used for all savings calculations in the
-        platform.
-        """
-        return self._get(
-            "/savings/interest-rate",
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=SavingRetrieveInterestRateResponse,
-        )
-
     def withdraw(
         self,
         *,
@@ -310,56 +235,6 @@ class AsyncSavingsResource(AsyncAPIResource):
         """
         return AsyncSavingsResourceWithStreamingResponse(self)
 
-    async def calculate_interest(
-        self,
-        *,
-        amount: float,
-        days: float,
-        custom_rate: float | NotGiven = NOT_GIVEN,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> SavingCalculateInterestResponse:
-        """
-        Calculates the potential interest earned for a given investment amount and
-        period. Uses the platform's current interest rate by default, but allows
-        specifying a custom rate for scenario planning. Returns detailed breakdown of
-        the calculation with step-by-step formula application.
-
-        Args:
-          amount: Principal amount to invest
-
-          days: Investment duration in days
-
-          custom_rate: Optional custom interest rate (annual percentage)
-
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        return await self._post(
-            "/savings/calculator",
-            body=await async_maybe_transform(
-                {
-                    "amount": amount,
-                    "days": days,
-                    "custom_rate": custom_rate,
-                },
-                saving_calculate_interest_params.SavingCalculateInterestParams,
-            ),
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=SavingCalculateInterestResponse,
-        )
-
     async def deposit(
         self,
         *,
@@ -403,6 +278,32 @@ class AsyncSavingsResource(AsyncAPIResource):
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=SavingDepositResponse,
+        )
+
+    async def get_dashboard(
+        self,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> SavingGetDashboardResponse:
+        """Provides a comprehensive overview of the user's savings portfolio.
+
+        Includes
+        total savings, current interest rate, total invested amount, one-year
+        projection, and detailed information about investments by agent. Calculates
+        real-time investment values based on the current interest rate and the exact
+        duration of each investment.
+        """
+        return await self._get(
+            "/savings/dashboard",
+            options=make_request_options(
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+            ),
+            cast_to=SavingGetDashboardResponse,
         )
 
     async def list_investments(
@@ -466,55 +367,6 @@ class AsyncSavingsResource(AsyncAPIResource):
             cast_to=SavingListInvestmentsByAgentResponse,
         )
 
-    async def retrieve_dashboard(
-        self,
-        *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> SavingRetrieveDashboardResponse:
-        """Provides a comprehensive overview of the user's savings portfolio.
-
-        Includes
-        total savings, current interest rate, total invested amount, one-year
-        projection, and detailed information about investments by agent. Calculates
-        real-time investment values based on the current interest rate and the exact
-        duration of each investment.
-        """
-        return await self._get(
-            "/savings/dashboard",
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=SavingRetrieveDashboardResponse,
-        )
-
-    async def retrieve_interest_rate(
-        self,
-        *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> SavingRetrieveInterestRateResponse:
-        """
-        Retrieves the current annual interest rate for investments and the timestamp
-        when it was last updated. This rate is used for all savings calculations in the
-        platform.
-        """
-        return await self._get(
-            "/savings/interest-rate",
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=SavingRetrieveInterestRateResponse,
-        )
-
     async def withdraw(
         self,
         *,
@@ -559,23 +411,17 @@ class SavingsResourceWithRawResponse:
     def __init__(self, savings: SavingsResource) -> None:
         self._savings = savings
 
-        self.calculate_interest = to_raw_response_wrapper(
-            savings.calculate_interest,
-        )
         self.deposit = to_raw_response_wrapper(
             savings.deposit,
+        )
+        self.get_dashboard = to_raw_response_wrapper(
+            savings.get_dashboard,
         )
         self.list_investments = to_raw_response_wrapper(
             savings.list_investments,
         )
         self.list_investments_by_agent = to_raw_response_wrapper(
             savings.list_investments_by_agent,
-        )
-        self.retrieve_dashboard = to_raw_response_wrapper(
-            savings.retrieve_dashboard,
-        )
-        self.retrieve_interest_rate = to_raw_response_wrapper(
-            savings.retrieve_interest_rate,
         )
         self.withdraw = to_raw_response_wrapper(
             savings.withdraw,
@@ -586,23 +432,17 @@ class AsyncSavingsResourceWithRawResponse:
     def __init__(self, savings: AsyncSavingsResource) -> None:
         self._savings = savings
 
-        self.calculate_interest = async_to_raw_response_wrapper(
-            savings.calculate_interest,
-        )
         self.deposit = async_to_raw_response_wrapper(
             savings.deposit,
+        )
+        self.get_dashboard = async_to_raw_response_wrapper(
+            savings.get_dashboard,
         )
         self.list_investments = async_to_raw_response_wrapper(
             savings.list_investments,
         )
         self.list_investments_by_agent = async_to_raw_response_wrapper(
             savings.list_investments_by_agent,
-        )
-        self.retrieve_dashboard = async_to_raw_response_wrapper(
-            savings.retrieve_dashboard,
-        )
-        self.retrieve_interest_rate = async_to_raw_response_wrapper(
-            savings.retrieve_interest_rate,
         )
         self.withdraw = async_to_raw_response_wrapper(
             savings.withdraw,
@@ -613,23 +453,17 @@ class SavingsResourceWithStreamingResponse:
     def __init__(self, savings: SavingsResource) -> None:
         self._savings = savings
 
-        self.calculate_interest = to_streamed_response_wrapper(
-            savings.calculate_interest,
-        )
         self.deposit = to_streamed_response_wrapper(
             savings.deposit,
+        )
+        self.get_dashboard = to_streamed_response_wrapper(
+            savings.get_dashboard,
         )
         self.list_investments = to_streamed_response_wrapper(
             savings.list_investments,
         )
         self.list_investments_by_agent = to_streamed_response_wrapper(
             savings.list_investments_by_agent,
-        )
-        self.retrieve_dashboard = to_streamed_response_wrapper(
-            savings.retrieve_dashboard,
-        )
-        self.retrieve_interest_rate = to_streamed_response_wrapper(
-            savings.retrieve_interest_rate,
         )
         self.withdraw = to_streamed_response_wrapper(
             savings.withdraw,
@@ -640,23 +474,17 @@ class AsyncSavingsResourceWithStreamingResponse:
     def __init__(self, savings: AsyncSavingsResource) -> None:
         self._savings = savings
 
-        self.calculate_interest = async_to_streamed_response_wrapper(
-            savings.calculate_interest,
-        )
         self.deposit = async_to_streamed_response_wrapper(
             savings.deposit,
+        )
+        self.get_dashboard = async_to_streamed_response_wrapper(
+            savings.get_dashboard,
         )
         self.list_investments = async_to_streamed_response_wrapper(
             savings.list_investments,
         )
         self.list_investments_by_agent = async_to_streamed_response_wrapper(
             savings.list_investments_by_agent,
-        )
-        self.retrieve_dashboard = async_to_streamed_response_wrapper(
-            savings.retrieve_dashboard,
-        )
-        self.retrieve_interest_rate = async_to_streamed_response_wrapper(
-            savings.retrieve_interest_rate,
         )
         self.withdraw = async_to_streamed_response_wrapper(
             savings.withdraw,

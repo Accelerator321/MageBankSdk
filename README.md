@@ -15,9 +15,12 @@ The full API of this library can be found in [api.md](api.md).
 ## Installation
 
 ```sh
-# install from PyPI
-pip install --pre magebank
+# install from the production repo
+pip install git+ssh://git@github.com/Accelerator321/MageBankSdk.git
 ```
+
+> [!NOTE]
+> Once this package is [published to PyPI](https://app.stainless.com/docs/guides/publish), this will become: `pip install --pre magebank`
 
 ## Usage
 
@@ -77,6 +80,8 @@ Nested request parameters are [TypedDicts](https://docs.python.org/3/library/typ
 
 Typed requests and responses provide autocomplete and documentation within your editor. If you would like to see type errors in VS Code to help catch bugs earlier, set `python.analysis.typeCheckingMode` to `basic`.
 
+from datetime import date
+
 ## Nested params
 
 Nested parameters are dictionaries, typed using `TypedDict`, for example:
@@ -86,17 +91,13 @@ from magebank import Magebank
 
 client = Magebank()
 
-response = client.payments.register(
-    name="Vendor XYZ2",
-    paymentdetails={
-        "amount": 6,
-        "currency": "USDC",
-        "method": "CRYPTO_ADDRESS",
+client.payments.export(
+    format="csv",
+    date_range={
+        "end": date.fromisoformat("2019-12-27"),
+        "start": date.fromisoformat("2019-12-27"),
     },
-    receiveragentid="agent_k77NTwxp2Ym3JCmVsKtXQA",
-    senderagentid="agent_eC6ZezevNsqxvoKmQrUuoU",
 )
-print(response.paymentdetails)
 ```
 
 ## Handling errors

@@ -6,7 +6,7 @@ from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
 
-__all__ = ["SavingCalculateInterestResponse", "Calculation"]
+__all__ = ["InvestmentCalculateInterestResponse", "Calculation"]
 
 
 class Calculation(BaseModel):
@@ -17,7 +17,7 @@ class Calculation(BaseModel):
     """Step-by-step calculation process"""
 
 
-class SavingCalculateInterestResponse(BaseModel):
+class InvestmentCalculateInterestResponse(BaseModel):
     annual_yield: Optional[str] = FieldInfo(alias="annualYield", default=None)
     """Effective annual yield as a percentage"""
 

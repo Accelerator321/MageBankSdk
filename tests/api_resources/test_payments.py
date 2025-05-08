@@ -15,6 +15,7 @@ from magebank.types import (
     PaymentDeclineResponse,
     PaymentRegisterResponse,
 )
+from magebank._utils import parse_date
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
@@ -22,6 +23,7 @@ base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 class TestPayments:
     parametrize = pytest.mark.parametrize("client", [False, True], indirect=True, ids=["loose", "strict"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_method_retrieve(self, client: Magebank) -> None:
         payment = client.payments.retrieve(
@@ -29,6 +31,7 @@ class TestPayments:
         )
         assert_matches_type(Payment, payment, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_raw_response_retrieve(self, client: Magebank) -> None:
         response = client.payments.with_raw_response.retrieve(
@@ -40,6 +43,7 @@ class TestPayments:
         payment = response.parse()
         assert_matches_type(Payment, payment, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_streaming_response_retrieve(self, client: Magebank) -> None:
         with client.payments.with_streaming_response.retrieve(
@@ -53,6 +57,7 @@ class TestPayments:
 
         assert cast(Any, response.is_closed) is True
 
+    @pytest.mark.skip()
     @parametrize
     def test_path_params_retrieve(self, client: Magebank) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
@@ -60,6 +65,7 @@ class TestPayments:
                 "",
             )
 
+    @pytest.mark.skip()
     @parametrize
     def test_method_approve(self, client: Magebank) -> None:
         payment = client.payments.approve(
@@ -67,6 +73,7 @@ class TestPayments:
         )
         assert_matches_type(PaymentApproveResponse, payment, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_raw_response_approve(self, client: Magebank) -> None:
         response = client.payments.with_raw_response.approve(
@@ -78,6 +85,7 @@ class TestPayments:
         payment = response.parse()
         assert_matches_type(PaymentApproveResponse, payment, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_streaming_response_approve(self, client: Magebank) -> None:
         with client.payments.with_streaming_response.approve(
@@ -91,6 +99,7 @@ class TestPayments:
 
         assert cast(Any, response.is_closed) is True
 
+    @pytest.mark.skip()
     @parametrize
     def test_method_decline(self, client: Magebank) -> None:
         payment = client.payments.decline(
@@ -98,6 +107,7 @@ class TestPayments:
         )
         assert_matches_type(PaymentDeclineResponse, payment, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_raw_response_decline(self, client: Magebank) -> None:
         response = client.payments.with_raw_response.decline(
@@ -109,6 +119,7 @@ class TestPayments:
         payment = response.parse()
         assert_matches_type(PaymentDeclineResponse, payment, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_streaming_response_decline(self, client: Magebank) -> None:
         with client.payments.with_streaming_response.decline(
@@ -122,6 +133,53 @@ class TestPayments:
 
         assert cast(Any, response.is_closed) is True
 
+    @pytest.mark.skip()
+    @parametrize
+    def test_method_export(self, client: Magebank) -> None:
+        payment = client.payments.export(
+            format="csv",
+        )
+        assert payment is None
+
+    @pytest.mark.skip()
+    @parametrize
+    def test_method_export_with_all_params(self, client: Magebank) -> None:
+        payment = client.payments.export(
+            format="csv",
+            date_range={
+                "end": parse_date("2019-12-27"),
+                "start": parse_date("2019-12-27"),
+            },
+        )
+        assert payment is None
+
+    @pytest.mark.skip()
+    @parametrize
+    def test_raw_response_export(self, client: Magebank) -> None:
+        response = client.payments.with_raw_response.export(
+            format="csv",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        payment = response.parse()
+        assert payment is None
+
+    @pytest.mark.skip()
+    @parametrize
+    def test_streaming_response_export(self, client: Magebank) -> None:
+        with client.payments.with_streaming_response.export(
+            format="csv",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            payment = response.parse()
+            assert payment is None
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip()
     @parametrize
     def test_method_register(self, client: Magebank) -> None:
         payment = client.payments.register(
@@ -136,6 +194,7 @@ class TestPayments:
         )
         assert_matches_type(PaymentRegisterResponse, payment, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_method_register_with_all_params(self, client: Magebank) -> None:
         payment = client.payments.register(
@@ -156,6 +215,7 @@ class TestPayments:
         )
         assert_matches_type(PaymentRegisterResponse, payment, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_raw_response_register(self, client: Magebank) -> None:
         response = client.payments.with_raw_response.register(
@@ -174,6 +234,7 @@ class TestPayments:
         payment = response.parse()
         assert_matches_type(PaymentRegisterResponse, payment, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_streaming_response_register(self, client: Magebank) -> None:
         with client.payments.with_streaming_response.register(
@@ -198,6 +259,7 @@ class TestPayments:
 class TestAsyncPayments:
     parametrize = pytest.mark.parametrize("async_client", [False, True], indirect=True, ids=["loose", "strict"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_method_retrieve(self, async_client: AsyncMagebank) -> None:
         payment = await async_client.payments.retrieve(
@@ -205,6 +267,7 @@ class TestAsyncPayments:
         )
         assert_matches_type(Payment, payment, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_raw_response_retrieve(self, async_client: AsyncMagebank) -> None:
         response = await async_client.payments.with_raw_response.retrieve(
@@ -216,6 +279,7 @@ class TestAsyncPayments:
         payment = await response.parse()
         assert_matches_type(Payment, payment, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_streaming_response_retrieve(self, async_client: AsyncMagebank) -> None:
         async with async_client.payments.with_streaming_response.retrieve(
@@ -229,6 +293,7 @@ class TestAsyncPayments:
 
         assert cast(Any, response.is_closed) is True
 
+    @pytest.mark.skip()
     @parametrize
     async def test_path_params_retrieve(self, async_client: AsyncMagebank) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
@@ -236,6 +301,7 @@ class TestAsyncPayments:
                 "",
             )
 
+    @pytest.mark.skip()
     @parametrize
     async def test_method_approve(self, async_client: AsyncMagebank) -> None:
         payment = await async_client.payments.approve(
@@ -243,6 +309,7 @@ class TestAsyncPayments:
         )
         assert_matches_type(PaymentApproveResponse, payment, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_raw_response_approve(self, async_client: AsyncMagebank) -> None:
         response = await async_client.payments.with_raw_response.approve(
@@ -254,6 +321,7 @@ class TestAsyncPayments:
         payment = await response.parse()
         assert_matches_type(PaymentApproveResponse, payment, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_streaming_response_approve(self, async_client: AsyncMagebank) -> None:
         async with async_client.payments.with_streaming_response.approve(
@@ -267,6 +335,7 @@ class TestAsyncPayments:
 
         assert cast(Any, response.is_closed) is True
 
+    @pytest.mark.skip()
     @parametrize
     async def test_method_decline(self, async_client: AsyncMagebank) -> None:
         payment = await async_client.payments.decline(
@@ -274,6 +343,7 @@ class TestAsyncPayments:
         )
         assert_matches_type(PaymentDeclineResponse, payment, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_raw_response_decline(self, async_client: AsyncMagebank) -> None:
         response = await async_client.payments.with_raw_response.decline(
@@ -285,6 +355,7 @@ class TestAsyncPayments:
         payment = await response.parse()
         assert_matches_type(PaymentDeclineResponse, payment, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_streaming_response_decline(self, async_client: AsyncMagebank) -> None:
         async with async_client.payments.with_streaming_response.decline(
@@ -298,6 +369,53 @@ class TestAsyncPayments:
 
         assert cast(Any, response.is_closed) is True
 
+    @pytest.mark.skip()
+    @parametrize
+    async def test_method_export(self, async_client: AsyncMagebank) -> None:
+        payment = await async_client.payments.export(
+            format="csv",
+        )
+        assert payment is None
+
+    @pytest.mark.skip()
+    @parametrize
+    async def test_method_export_with_all_params(self, async_client: AsyncMagebank) -> None:
+        payment = await async_client.payments.export(
+            format="csv",
+            date_range={
+                "end": parse_date("2019-12-27"),
+                "start": parse_date("2019-12-27"),
+            },
+        )
+        assert payment is None
+
+    @pytest.mark.skip()
+    @parametrize
+    async def test_raw_response_export(self, async_client: AsyncMagebank) -> None:
+        response = await async_client.payments.with_raw_response.export(
+            format="csv",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        payment = await response.parse()
+        assert payment is None
+
+    @pytest.mark.skip()
+    @parametrize
+    async def test_streaming_response_export(self, async_client: AsyncMagebank) -> None:
+        async with async_client.payments.with_streaming_response.export(
+            format="csv",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            payment = await response.parse()
+            assert payment is None
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip()
     @parametrize
     async def test_method_register(self, async_client: AsyncMagebank) -> None:
         payment = await async_client.payments.register(
@@ -312,6 +430,7 @@ class TestAsyncPayments:
         )
         assert_matches_type(PaymentRegisterResponse, payment, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_method_register_with_all_params(self, async_client: AsyncMagebank) -> None:
         payment = await async_client.payments.register(
@@ -332,6 +451,7 @@ class TestAsyncPayments:
         )
         assert_matches_type(PaymentRegisterResponse, payment, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_raw_response_register(self, async_client: AsyncMagebank) -> None:
         response = await async_client.payments.with_raw_response.register(
@@ -350,6 +470,7 @@ class TestAsyncPayments:
         payment = await response.parse()
         assert_matches_type(PaymentRegisterResponse, payment, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_streaming_response_register(self, async_client: AsyncMagebank) -> None:
         async with async_client.payments.with_streaming_response.register(

@@ -6,10 +6,10 @@ from typing_extensions import Required, Annotated, TypedDict
 
 from .._utils import PropertyInfo
 
-__all__ = ["SavingCalculateInterestParams"]
+__all__ = ["InvestmentCalculateInterestParams"]
 
 
-class SavingCalculateInterestParams(TypedDict, total=False):
+class InvestmentCalculateInterestParams(TypedDict, total=False):
     amount: Required[float]
     """Principal amount to invest"""
 

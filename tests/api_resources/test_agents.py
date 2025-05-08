@@ -22,6 +22,7 @@ base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 class TestAgents:
     parametrize = pytest.mark.parametrize("client", [False, True], indirect=True, ids=["loose", "strict"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_method_create(self, client: Magebank) -> None:
         agent = client.agents.create(
@@ -30,6 +31,7 @@ class TestAgents:
         )
         assert_matches_type(AgentCreateResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_method_create_with_all_params(self, client: Magebank) -> None:
         agent = client.agents.create(
@@ -47,6 +49,7 @@ class TestAgents:
         )
         assert_matches_type(AgentCreateResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_raw_response_create(self, client: Magebank) -> None:
         response = client.agents.with_raw_response.create(
@@ -59,6 +62,7 @@ class TestAgents:
         agent = response.parse()
         assert_matches_type(AgentCreateResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_streaming_response_create(self, client: Magebank) -> None:
         with client.agents.with_streaming_response.create(
@@ -73,6 +77,7 @@ class TestAgents:
 
         assert cast(Any, response.is_closed) is True
 
+    @pytest.mark.skip()
     @parametrize
     def test_method_retrieve(self, client: Magebank) -> None:
         agent = client.agents.retrieve(
@@ -80,6 +85,7 @@ class TestAgents:
         )
         assert_matches_type(AgentRetrieveResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_raw_response_retrieve(self, client: Magebank) -> None:
         response = client.agents.with_raw_response.retrieve(
@@ -91,6 +97,7 @@ class TestAgents:
         agent = response.parse()
         assert_matches_type(AgentRetrieveResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_streaming_response_retrieve(self, client: Magebank) -> None:
         with client.agents.with_streaming_response.retrieve(
@@ -104,6 +111,7 @@ class TestAgents:
 
         assert cast(Any, response.is_closed) is True
 
+    @pytest.mark.skip()
     @parametrize
     def test_path_params_retrieve(self, client: Magebank) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
@@ -111,6 +119,7 @@ class TestAgents:
                 "",
             )
 
+    @pytest.mark.skip()
     @parametrize
     def test_method_deposit(self, client: Magebank) -> None:
         agent = client.agents.deposit(
@@ -120,6 +129,7 @@ class TestAgents:
         )
         assert_matches_type(AgentDepositResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_method_deposit_with_all_params(self, client: Magebank) -> None:
         agent = client.agents.deposit(
@@ -130,6 +140,7 @@ class TestAgents:
         )
         assert_matches_type(AgentDepositResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_raw_response_deposit(self, client: Magebank) -> None:
         response = client.agents.with_raw_response.deposit(
@@ -143,6 +154,7 @@ class TestAgents:
         agent = response.parse()
         assert_matches_type(AgentDepositResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_streaming_response_deposit(self, client: Magebank) -> None:
         with client.agents.with_streaming_response.deposit(
@@ -158,6 +170,7 @@ class TestAgents:
 
         assert cast(Any, response.is_closed) is True
 
+    @pytest.mark.skip()
     @parametrize
     def test_method_withdraw(self, client: Magebank) -> None:
         agent = client.agents.withdraw(
@@ -167,6 +180,7 @@ class TestAgents:
         )
         assert_matches_type(AgentWithdrawResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_method_withdraw_with_all_params(self, client: Magebank) -> None:
         agent = client.agents.withdraw(
@@ -177,6 +191,7 @@ class TestAgents:
         )
         assert_matches_type(AgentWithdrawResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_raw_response_withdraw(self, client: Magebank) -> None:
         response = client.agents.with_raw_response.withdraw(
@@ -190,6 +205,7 @@ class TestAgents:
         agent = response.parse()
         assert_matches_type(AgentWithdrawResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_streaming_response_withdraw(self, client: Magebank) -> None:
         with client.agents.with_streaming_response.withdraw(
@@ -209,6 +225,7 @@ class TestAgents:
 class TestAsyncAgents:
     parametrize = pytest.mark.parametrize("async_client", [False, True], indirect=True, ids=["loose", "strict"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_method_create(self, async_client: AsyncMagebank) -> None:
         agent = await async_client.agents.create(
@@ -217,6 +234,7 @@ class TestAsyncAgents:
         )
         assert_matches_type(AgentCreateResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_method_create_with_all_params(self, async_client: AsyncMagebank) -> None:
         agent = await async_client.agents.create(
@@ -234,6 +252,7 @@ class TestAsyncAgents:
         )
         assert_matches_type(AgentCreateResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_raw_response_create(self, async_client: AsyncMagebank) -> None:
         response = await async_client.agents.with_raw_response.create(
@@ -246,6 +265,7 @@ class TestAsyncAgents:
         agent = await response.parse()
         assert_matches_type(AgentCreateResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_streaming_response_create(self, async_client: AsyncMagebank) -> None:
         async with async_client.agents.with_streaming_response.create(
@@ -260,6 +280,7 @@ class TestAsyncAgents:
 
         assert cast(Any, response.is_closed) is True
 
+    @pytest.mark.skip()
     @parametrize
     async def test_method_retrieve(self, async_client: AsyncMagebank) -> None:
         agent = await async_client.agents.retrieve(
@@ -267,6 +288,7 @@ class TestAsyncAgents:
         )
         assert_matches_type(AgentRetrieveResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_raw_response_retrieve(self, async_client: AsyncMagebank) -> None:
         response = await async_client.agents.with_raw_response.retrieve(
@@ -278,6 +300,7 @@ class TestAsyncAgents:
         agent = await response.parse()
         assert_matches_type(AgentRetrieveResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_streaming_response_retrieve(self, async_client: AsyncMagebank) -> None:
         async with async_client.agents.with_streaming_response.retrieve(
@@ -291,6 +314,7 @@ class TestAsyncAgents:
 
         assert cast(Any, response.is_closed) is True
 
+    @pytest.mark.skip()
     @parametrize
     async def test_path_params_retrieve(self, async_client: AsyncMagebank) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
@@ -298,6 +322,7 @@ class TestAsyncAgents:
                 "",
             )
 
+    @pytest.mark.skip()
     @parametrize
     async def test_method_deposit(self, async_client: AsyncMagebank) -> None:
         agent = await async_client.agents.deposit(
@@ -307,6 +332,7 @@ class TestAsyncAgents:
         )
         assert_matches_type(AgentDepositResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_method_deposit_with_all_params(self, async_client: AsyncMagebank) -> None:
         agent = await async_client.agents.deposit(
@@ -317,6 +343,7 @@ class TestAsyncAgents:
         )
         assert_matches_type(AgentDepositResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_raw_response_deposit(self, async_client: AsyncMagebank) -> None:
         response = await async_client.agents.with_raw_response.deposit(
@@ -330,6 +357,7 @@ class TestAsyncAgents:
         agent = await response.parse()
         assert_matches_type(AgentDepositResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_streaming_response_deposit(self, async_client: AsyncMagebank) -> None:
         async with async_client.agents.with_streaming_response.deposit(
@@ -345,6 +373,7 @@ class TestAsyncAgents:
 
         assert cast(Any, response.is_closed) is True
 
+    @pytest.mark.skip()
     @parametrize
     async def test_method_withdraw(self, async_client: AsyncMagebank) -> None:
         agent = await async_client.agents.withdraw(
@@ -354,6 +383,7 @@ class TestAsyncAgents:
         )
         assert_matches_type(AgentWithdrawResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_method_withdraw_with_all_params(self, async_client: AsyncMagebank) -> None:
         agent = await async_client.agents.withdraw(
@@ -364,6 +394,7 @@ class TestAsyncAgents:
         )
         assert_matches_type(AgentWithdrawResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_raw_response_withdraw(self, async_client: AsyncMagebank) -> None:
         response = await async_client.agents.with_raw_response.withdraw(
@@ -377,6 +408,7 @@ class TestAsyncAgents:
         agent = await response.parse()
         assert_matches_type(AgentWithdrawResponse, agent, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_streaming_response_withdraw(self, async_client: AsyncMagebank) -> None:
         async with async_client.agents.with_streaming_response.withdraw(

@@ -8,7 +8,7 @@ from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
 
-__all__ = ["Agent", "PaymentRules", "WalletAddress"]
+__all__ = ["Agent", "PaymentRules"]
 
 
 class PaymentRules(BaseModel):
@@ -23,14 +23,6 @@ class PaymentRules(BaseModel):
 
     transaction_limit: Optional[float] = FieldInfo(alias="transactionLimit", default=None)
     """Maximum amount for a single transaction"""
-
-
-class WalletAddress(BaseModel):
-    address_id: Optional[str] = FieldInfo(alias="addressId", default=None)
-
-    network_id: Optional[str] = FieldInfo(alias="networkId", default=None)
-
-    wallet_id: Optional[str] = FieldInfo(alias="walletId", default=None)
 
 
 class Agent(BaseModel):
@@ -60,4 +52,5 @@ class Agent(BaseModel):
     tags: Optional[List[str]] = None
     """Categories or labels assigned to the agent"""
 
-    wallet_address: Optional[WalletAddress] = FieldInfo(alias="walletAddress", default=None)
+    wallet_address: Optional[str] = FieldInfo(alias="walletAddress", default=None)
+    """Serialized wallet address in string format"""

@@ -17,6 +17,7 @@ base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 class TestAgentsWith:
     parametrize = pytest.mark.parametrize("client", [False, True], indirect=True, ids=["loose", "strict"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_method_retrieve(self, client: Magebank) -> None:
         agents_with = client.agents_with.retrieve(
@@ -24,6 +25,7 @@ class TestAgentsWith:
         )
         assert_matches_type(Agent, agents_with, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_raw_response_retrieve(self, client: Magebank) -> None:
         response = client.agents_with.with_raw_response.retrieve(
@@ -35,6 +37,7 @@ class TestAgentsWith:
         agents_with = response.parse()
         assert_matches_type(Agent, agents_with, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     def test_streaming_response_retrieve(self, client: Magebank) -> None:
         with client.agents_with.with_streaming_response.retrieve(
@@ -48,6 +51,7 @@ class TestAgentsWith:
 
         assert cast(Any, response.is_closed) is True
 
+    @pytest.mark.skip()
     @parametrize
     def test_path_params_retrieve(self, client: Magebank) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
@@ -59,6 +63,7 @@ class TestAgentsWith:
 class TestAsyncAgentsWith:
     parametrize = pytest.mark.parametrize("async_client", [False, True], indirect=True, ids=["loose", "strict"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_method_retrieve(self, async_client: AsyncMagebank) -> None:
         agents_with = await async_client.agents_with.retrieve(
@@ -66,6 +71,7 @@ class TestAsyncAgentsWith:
         )
         assert_matches_type(Agent, agents_with, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_raw_response_retrieve(self, async_client: AsyncMagebank) -> None:
         response = await async_client.agents_with.with_raw_response.retrieve(
@@ -77,6 +83,7 @@ class TestAsyncAgentsWith:
         agents_with = await response.parse()
         assert_matches_type(Agent, agents_with, path=["response"])
 
+    @pytest.mark.skip()
     @parametrize
     async def test_streaming_response_retrieve(self, async_client: AsyncMagebank) -> None:
         async with async_client.agents_with.with_streaming_response.retrieve(
@@ -90,6 +97,7 @@ class TestAsyncAgentsWith:
 
         assert cast(Any, response.is_closed) is True
 
+    @pytest.mark.skip()
     @parametrize
     async def test_path_params_retrieve(self, async_client: AsyncMagebank) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):

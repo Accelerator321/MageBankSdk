@@ -22,7 +22,7 @@ from ._types import (
 )
 from ._utils import is_given, get_async_library
 from ._version import __version__
-from .resources import user, agents, savings, payments, agents_with
+from .resources import user, agents, savings, payments, investment, agents_with, transactions
 from ._streaming import Stream as Stream, AsyncStream as AsyncStream
 from ._exceptions import APIStatusError
 from ._base_client import (
@@ -46,9 +46,11 @@ __all__ = [
 class Magebank(SyncAPIClient):
     agents_with: agents_with.AgentsWithResource
     agents: agents.AgentsResource
-    savings: savings.SavingsResource
+    investment: investment.InvestmentResource
     payments: payments.PaymentsResource
     user: user.UserResource
+    savings: savings.SavingsResource
+    transactions: transactions.TransactionsResource
     with_raw_response: MagebankWithRawResponse
     with_streaming_response: MagebankWithStreamedResponse
 
@@ -97,7 +99,7 @@ class Magebank(SyncAPIClient):
         if base_url is None:
             base_url = os.environ.get("MAGEBANK_BASE_URL")
         if base_url is None:
-            base_url = f"https://whale-app-bd2b5.ondigitalocean.app/"
+            base_url = f"https://whale-app-bd2b5.ondigitalocean.app"
 
         super().__init__(
             version=__version__,
@@ -112,9 +114,11 @@ class Magebank(SyncAPIClient):
 
         self.agents_with = agents_with.AgentsWithResource(self)
         self.agents = agents.AgentsResource(self)
-        self.savings = savings.SavingsResource(self)
+        self.investment = investment.InvestmentResource(self)
         self.payments = payments.PaymentsResource(self)
         self.user = user.UserResource(self)
+        self.savings = savings.SavingsResource(self)
+        self.transactions = transactions.TransactionsResource(self)
         self.with_raw_response = MagebankWithRawResponse(self)
         self.with_streaming_response = MagebankWithStreamedResponse(self)
 
@@ -257,9 +261,11 @@ class Magebank(SyncAPIClient):
 class AsyncMagebank(AsyncAPIClient):
     agents_with: agents_with.AsyncAgentsWithResource
     agents: agents.AsyncAgentsResource
-    savings: savings.AsyncSavingsResource
+    investment: investment.AsyncInvestmentResource
     payments: payments.AsyncPaymentsResource
     user: user.AsyncUserResource
+    savings: savings.AsyncSavingsResource
+    transactions: transactions.AsyncTransactionsResource
     with_raw_response: AsyncMagebankWithRawResponse
     with_streaming_response: AsyncMagebankWithStreamedResponse
 
@@ -308,7 +314,7 @@ class AsyncMagebank(AsyncAPIClient):
         if base_url is None:
             base_url = os.environ.get("MAGEBANK_BASE_URL")
         if base_url is None:
-            base_url = f"https://whale-app-bd2b5.ondigitalocean.app/"
+            base_url = f"https://whale-app-bd2b5.ondigitalocean.app"
 
         super().__init__(
             version=__version__,
@@ -323,9 +329,11 @@ class AsyncMagebank(AsyncAPIClient):
 
         self.agents_with = agents_with.AsyncAgentsWithResource(self)
         self.agents = agents.AsyncAgentsResource(self)
-        self.savings = savings.AsyncSavingsResource(self)
+        self.investment = investment.AsyncInvestmentResource(self)
         self.payments = payments.AsyncPaymentsResource(self)
         self.user = user.AsyncUserResource(self)
+        self.savings = savings.AsyncSavingsResource(self)
+        self.transactions = transactions.AsyncTransactionsResource(self)
         self.with_raw_response = AsyncMagebankWithRawResponse(self)
         self.with_streaming_response = AsyncMagebankWithStreamedResponse(self)
 
@@ -469,36 +477,44 @@ class MagebankWithRawResponse:
     def __init__(self, client: Magebank) -> None:
         self.agents_with = agents_with.AgentsWithResourceWithRawResponse(client.agents_with)
         self.agents = agents.AgentsResourceWithRawResponse(client.agents)
-        self.savings = savings.SavingsResourceWithRawResponse(client.savings)
+        self.investment = investment.InvestmentResourceWithRawResponse(client.investment)
         self.payments = payments.PaymentsResourceWithRawResponse(client.payments)
         self.user = user.UserResourceWithRawResponse(client.user)
+        self.savings = savings.SavingsResourceWithRawResponse(client.savings)
+        self.transactions = transactions.TransactionsResourceWithRawResponse(client.transactions)
 
 
 class AsyncMagebankWithRawResponse:
     def __init__(self, client: AsyncMagebank) -> None:
         self.agents_with = agents_with.AsyncAgentsWithResourceWithRawResponse(client.agents_with)
         self.agents = agents.AsyncAgentsResourceWithRawResponse(client.agents)
-        self.savings = savings.AsyncSavingsResourceWithRawResponse(client.savings)
+        self.investment = investment.AsyncInvestmentResourceWithRawResponse(client.investment)
         self.payments = payments.AsyncPaymentsResourceWithRawResponse(client.payments)
         self.user = user.AsyncUserResourceWithRawResponse(client.user)
+        self.savings = savings.AsyncSavingsResourceWithRawResponse(client.savings)
+        self.transactions = transactions.AsyncTransactionsResourceWithRawResponse(client.transactions)
 
 
 class MagebankWithStreamedResponse:
     def __init__(self, client: Magebank) -> None:
         self.agents_with = agents_with.AgentsWithResourceWithStreamingResponse(client.agents_with)
         self.agents = agents.AgentsResourceWithStreamingResponse(client.agents)
-        self.savings = savings.SavingsResourceWithStreamingResponse(client.savings)
+        self.investment = investment.InvestmentResourceWithStreamingResponse(client.investment)
         self.payments = payments.PaymentsResourceWithStreamingResponse(client.payments)
         self.user = user.UserResourceWithStreamingResponse(client.user)
+        self.savings = savings.SavingsResourceWithStreamingResponse(client.savings)
+        self.transactions = transactions.TransactionsResourceWithStreamingResponse(client.transactions)
 
 
 class AsyncMagebankWithStreamedResponse:
     def __init__(self, client: AsyncMagebank) -> None:
         self.agents_with = agents_with.AsyncAgentsWithResourceWithStreamingResponse(client.agents_with)
         self.agents = agents.AsyncAgentsResourceWithStreamingResponse(client.agents)
-        self.savings = savings.AsyncSavingsResourceWithStreamingResponse(client.savings)
+        self.investment = investment.AsyncInvestmentResourceWithStreamingResponse(client.investment)
         self.payments = payments.AsyncPaymentsResourceWithStreamingResponse(client.payments)
         self.user = user.AsyncUserResourceWithStreamingResponse(client.user)
+        self.savings = savings.AsyncSavingsResourceWithStreamingResponse(client.savings)
+        self.transactions = transactions.AsyncTransactionsResourceWithStreamingResponse(client.transactions)
 
 
 Client = Magebank
