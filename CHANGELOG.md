@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.0-alpha.3 (2025-05-08)
+
+Full Changelog: [v0.1.0-alpha.2...v0.1.0-alpha.3](https://github.com/Accelerator321/MageBankSdk/compare/v0.1.0-alpha.2...v0.1.0-alpha.3)
+
+### Features
+
+* **api:** update via SDK Studio ([7efdc25](https://github.com/Accelerator321/MageBankSdk/commit/7efdc2501cdfff1772872709cf27a0e797f55558))
+
+
+### Chores
+
+* sync repo ([70771a8](https://github.com/Accelerator321/MageBankSdk/commit/70771a82ad5fe726ddbbe041363a006c509e9758))
+* update SDK settings ([14eb817](https://github.com/Accelerator321/MageBankSdk/commit/14eb817064fc93e9d546120b207e75d8f4654b88))
+
 ## 0.1.0-alpha.2 (2025-05-07)
 
 Full Changelog: [v0.1.0-alpha.1...v0.1.0-alpha.2](https://github.com/Accelerator321/MageBankSdk/compare/v0.1.0-alpha.1...v0.1.0-alpha.2)
