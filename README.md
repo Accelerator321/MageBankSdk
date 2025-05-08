@@ -30,11 +30,11 @@ The full API of this library can be found in [api.md](api.md).
 import os
 from magebank import Magebank
 
-client = Magebank(
+mage = Magebank(
     api_key=os.environ.get("MAGEBANK_API_KEY"),  # This is the default and can be omitted
 )
 
-agent = client.agents_with.retrieve(
+agent = mage.agents_with.retrieve(
     "REPLACE_ME",
 )
 print(agent.id)
@@ -54,13 +54,13 @@ import os
 import asyncio
 from magebank import AsyncMagebank
 
-client = AsyncMagebank(
+mage = AsyncMagebank(
     api_key=os.environ.get("MAGEBANK_API_KEY"),  # This is the default and can be omitted
 )
 
 
 async def main() -> None:
-    agent = await client.agents_with.retrieve(
+    agent = await mage.agents_with.retrieve(
         "REPLACE_ME",
     )
     print(agent.id)
@@ -71,6 +71,171 @@ asyncio.run(main())
 
 Functionality between the synchronous and asynchronous clients is otherwise identical.
 
+## API Methods & Examples
+
+### Agent Operations
+
+#### Retrieve agent by ID
+```python
+# Get an agent by its ID
+agent = mage.agents_with.retrieve(
+    "agent_12345"  # Required: id - string
+)
+print(f"Agent Name: {agent.name}, Balance: {agent.balance} {agent.currency}")
+```
+
+#### Create a new agent
+```python
+# Create a new agent
+new_agent = mage.agents.create(
+    name="Business Expense Account",  # Required: name - string
+    userid="user_12345",              # Required: userid - string
+    # Optional parameters
+    balance=1000.00,                  # Optional: balance - number
+    currency="USD",                   # Optional: currency - string
+    dailylimit=200.00,                # Optional: dailylimit - number
+    description="Expense account for marketing team",  # Optional: description - string
+    requireapprovalaboveamount=500.00,  # Optional: requireapprovalaboveamount - number
+    requireapprovalforall=False,      # Optional: requireapprovalforall - boolean
+    tags=["marketing", "expenses"],   # Optional: tags - array of strings
+    transactionlimit=2000.00,         # Optional: transactionlimit - number
+    walletaddress="wallet_xyz123"     # Optional: walletaddress - string
+)
+print(f"Created agent with ID: {new_agent.id}")
+```
+
+#### Deposit funds into agent
+```python
+# Deposit funds into an agent
+deposit = mage.agents.deposit(
+    agentid="agent_12345",  # Required: agentid - string
+    amount=500.00,          # Required: amount - number
+    userid="user_12345",    # Required: userid - string
+    currency="USD"          # Optional: currency - string
+)
+print(f"Deposit successful: {deposit.id}, New balance: {deposit.new_balance}")
+```
+
+#### Withdraw funds from agent
+```python
+# Withdraw funds from an agent
+withdrawal = mage.agents.withdraw(
+    agentid="agent_12345",  # Required: agentid - string
+    amount=200.00,          # Required: amount - number
+    userid="user_12345",    # Required: userid - string
+    currency="USD"          # Optional: currency - string
+)
+print(f"Withdrawal successful: {withdrawal.id}, New balance: {withdrawal.new_balance}")
+```
+
+### Payment Operations
+
+#### Approve a payment
+```python
+# Approve a pending payment
+approval = mage.payments.set_approve(
+    paymentId="payment_12345"  # Required: paymentId - string
+)
+print(f"Payment approved: {approval.status}")
+```
+
+#### Decline a payment
+```python
+# Decline a pending payment
+decline = mage.payments.set_decline(
+    paymentId="payment_12345"  # Required: paymentId - string
+)
+print(f"Payment declined: {decline.status}")
+```
+
+#### Export payment data
+```python
+from datetime import date
+
+# Export payment data for a specific date range
+export = mage.payments.export(
+    format="csv",           # Required: format - string
+    dateRange={             # Optional: dateRange - object
+        "start": date.fromisoformat("2025-01-01"),  # Optional: start - string
+        "end": date.fromisoformat("2025-04-30")     # Optional: end - string
+    }
+)
+print(f"Export generated: {export.url}")
+```
+
+#### Register a new payment
+```python
+# Register a new payment
+payment = mage.payments.register(
+    name="Office Supplies Purchase",  # Required: name - string
+    paymentdetails={                  # Required: paymentdetails - object
+        "amount": 149.99,             # Required: amount - number
+        "currency": "USD",            # Required: currency - string
+        "method": "bank_transfer"     # Required: method - string
+    },
+    receiveragentid="agent_67890",    # Required: receiveragentid - string
+    senderagentid="agent_12345",      # Required: senderagentid - string
+    # Optional parameters
+    contactdetails={                  # Optional: contactdetails - object
+        "email": "accounting@example.com",        # Optional: email - string
+        "phoneNumber": "+15551234567"             # Optional: phoneNumber - string
+    },
+    tags=["office", "supplies"],      # Optional: tags - array of strings
+    type="expense"                    # Optional: type - string
+)
+print(f"Payment registered with ID: {payment.id}, Status: {payment.status}")
+```
+
+#### List user payments
+```python
+# Get all payments for a user
+all_payments = mage.user.list_payments()
+print(f"Found {len(all_payments.results)} payments")
+
+# Get only approved payments
+approved_payments = mage.user.list_payments(
+    approvalStatus="approved"  # Optional: approvalStatus - string
+)
+print(f"Found {len(approved_payments.results)} approved payments")
+```
+
+### Savings Operations
+
+#### Create savings deposit
+```python
+# Create a savings deposit
+deposit = mage.savings.deposit(
+    agentId="agent_12345",  # Required: agentId - string
+    amount=1000.00          # Required: amount - number
+)
+print(f"Investment created: {deposit.investment_id}, APY: {deposit.apy}%")
+```
+
+#### Withdraw from savings
+```python
+# Withdraw from savings
+withdrawal = mage.savings.withdraw(
+    investmentId="investment_12345"  # Required: investmentId - string
+)
+print(f"Withdrawal successful: {withdrawal.amount} {withdrawal.currency}")
+```
+
+### Transaction Operations
+
+#### Get summary of transactions
+```python
+from datetime import date
+
+# Get transaction summary for a date range
+summary = mage.transactions.retrieve_summary(
+    start_date="2025-01-01",  # Required: start_date - string
+    end_date="2025-04-30"     # Required: end_date - string
+)
+print(f"Total transactions: {summary.count}")
+print(f"Total volume: {summary.volume} {summary.currency}")
+print(f"Average transaction size: {summary.average}")
+```
+
 ## Using types
 
 Nested request parameters are [TypedDicts](https://docs.python.org/3/library/typing.html#typing.TypedDict). Responses are [Pydantic models](https://docs.pydantic.dev) which also provide helper methods for things like:
@@ -80,8 +245,6 @@ Nested request parameters are [TypedDicts](https://docs.python.org/3/library/typ
 
 Typed requests and responses provide autocomplete and documentation within your editor. If you would like to see type errors in VS Code to help catch bugs earlier, set `python.analysis.typeCheckingMode` to `basic`.
 
-from datetime import date
-
 ## Nested params
 
 Nested parameters are dictionaries, typed using `TypedDict`, for example:
@@ -89,9 +252,9 @@ Nested parameters are dictionaries, typed using `TypedDict`, for example:
 ```python
 from magebank import Magebank
 
-client = Magebank()
+mage = Magebank()
 
-client.payments.export(
+mage.payments.export(
     format="csv",
     date_range={
         "end": date.fromisoformat("2019-12-27"),
@@ -113,10 +276,10 @@ All errors inherit from `magebank.APIError`.
 import magebank
 from magebank import Magebank
 
-client = Magebank()
+mage = Magebank()
 
 try:
-    client.agents_with.retrieve(
+    mage.agents_with.retrieve(
         "REPLACE_ME",
     )
 except magebank.APIConnectionError as e:
@@ -155,13 +318,13 @@ You can use the `max_retries` option to configure or disable retry settings:
 from magebank import Magebank
 
 # Configure the default for all requests:
-client = Magebank(
+mage = Magebank(
     # default is 2
     max_retries=0,
 )
 
 # Or, configure per-request:
-client.with_options(max_retries=5).agents_with.retrieve(
+mage.with_options(max_retries=5).agents_with.retrieve(
     "REPLACE_ME",
 )
 ```
@@ -175,18 +338,18 @@ which accepts a float or an [`httpx.Timeout`](https://www.python-httpx.org/advan
 from magebank import Magebank
 
 # Configure the default for all requests:
-client = Magebank(
+mage = Magebank(
     # 20 seconds (default is 1 minute)
     timeout=20.0,
 )
 
 # More granular control:
-client = Magebank(
+mage = Magebank(
     timeout=httpx.Timeout(60.0, read=5.0, write=10.0, connect=2.0),
 )
 
 # Override per-request:
-client.with_options(timeout=5.0).agents_with.retrieve(
+mage.with_options(timeout=5.0).agents_with.retrieve(
     "REPLACE_ME",
 )
 ```
@@ -228,8 +391,8 @@ The "raw" Response object can be accessed by prefixing `.with_raw_response.` to 
 ```py
 from magebank import Magebank
 
-client = Magebank()
-response = client.agents_with.with_raw_response.retrieve(
+mage = Magebank()
+response = mage.agents_with.with_raw_response.retrieve(
     "REPLACE_ME",
 )
 print(response.headers.get('X-My-Header'))
@@ -249,7 +412,7 @@ The above interface eagerly reads the full response body when you make the reque
 To stream the response body, use `.with_streaming_response` instead, which requires a context manager and only reads the response body once you call `.read()`, `.text()`, `.json()`, `.iter_bytes()`, `.iter_text()`, `.iter_lines()` or `.parse()`. In the async client, these are async methods.
 
 ```python
-with client.agents_with.with_streaming_response.retrieve(
+with mage.agents_with.with_streaming_response.retrieve(
     "REPLACE_ME",
 ) as response:
     print(response.headers.get("X-My-Header"))
@@ -268,13 +431,13 @@ If you need to access undocumented endpoints, params, or response properties, th
 
 #### Undocumented endpoints
 
-To make requests to undocumented endpoints, you can make requests using `client.get`, `client.post`, and other
+To make requests to undocumented endpoints, you can make requests using `mage.get`, `mage.post`, and other
 http verbs. Options on the client will be respected (such as retries) when making this request.
 
 ```py
 import httpx
 
-response = client.post(
+response = mage.post(
     "/foo",
     cast_to=httpx.Response,
     body={"my_param": True},
@@ -306,7 +469,7 @@ You can directly override the [httpx client](https://www.python-httpx.org/api/#c
 import httpx
 from magebank import Magebank, DefaultHttpxClient
 
-client = Magebank(
+mage = Magebank(
     # Or use the `MAGEBANK_BASE_URL` env var
     base_url="http://my.test.server.example.com:8083",
     http_client=DefaultHttpxClient(
@@ -319,7 +482,7 @@ client = Magebank(
 You can also customize the client on a per-request basis by using `with_options()`:
 
 ```python
-client.with_options(http_client=DefaultHttpxClient(...))
+mage.with_options(http_client=DefaultHttpxClient(...))
 ```
 
 ### Managing HTTP resources
@@ -329,7 +492,7 @@ By default the library closes underlying HTTP connections whenever the client is
 ```py
 from magebank import Magebank
 
-with Magebank() as client:
+with Magebank() as mage:
   # make requests here
   ...
 
