@@ -15,9 +15,12 @@ The full API of this library can be found in [api.md](api.md).
 ## Installation
 
 ```sh
-# install from PyPI
-pip install --pre magebank
+# install from this staging repo
+pip install git+ssh://git@github.com/stainless-sdks/magebank-python.git
 ```
+
+> [!NOTE]
+> Once this package is [published to PyPI](https://app.stainless.com/docs/guides/publish), this will become: `pip install --pre magebank`
 
 ## Usage
 
@@ -37,10 +40,10 @@ agent = client.agents_with.retrieve(
 print(agent.id)
 ```
 
-While you can provide a `auth_token` keyword argument,
+While you can provide a `bearer_token` keyword argument,
 we recommend using [python-dotenv](https://pypi.org/project/python-dotenv/)
-to add `MAGEBANK_AUTH_TOKENOptional environment variable="My Auth Token"` to your `.env` file
-so that your Auth Token is not stored in source control.
+to add `MAGEBANK_BEARER_TOKEN="My Bearer Token"` to your `.env` file
+so that your Bearer Token is not stored in source control.
 
 ## Async usage
 
@@ -77,6 +80,8 @@ Nested request parameters are [TypedDicts](https://docs.python.org/3/library/typ
 
 Typed requests and responses provide autocomplete and documentation within your editor. If you would like to see type errors in VS Code to help catch bugs earlier, set `python.analysis.typeCheckingMode` to `basic`.
 
+from datetime import date
+
 ## Nested params
 
 Nested parameters are dictionaries, typed using `TypedDict`, for example:
@@ -86,17 +91,13 @@ from magebank import Magebank
 
 client = Magebank()
 
-response = client.payments.register(
-    name="Vendor XYZ2",
-    paymentdetails={
-        "amount": 6,
-        "currency": "USDC",
-        "method": "CRYPTO_ADDRESS",
+client.payments.export(
+    format="csv",
+    date_range={
+        "end": date.fromisoformat("2019-12-27"),
+        "start": date.fromisoformat("2019-12-27"),
     },
-    receiveragentid="agent_k77NTwxp2Ym3JCmVsKtXQA",
-    senderagentid="agent_eC6ZezevNsqxvoKmQrUuoU",
 )
-print(response.paymentdetails)
 ```
 
 ## Handling errors
@@ -237,9 +238,9 @@ agents_with = response.parse()  # get the object that `agents_with.retrieve()` w
 print(agents_with.id)
 ```
 
-These methods return an [`APIResponse`](https://github.com/Accelerator321/MageBankSdk/tree/main/src/magebank/_response.py) object.
+These methods return an [`APIResponse`](https://github.com/stainless-sdks/magebank-python/tree/main/src/magebank/_response.py) object.
 
-The async client returns an [`AsyncAPIResponse`](https://github.com/Accelerator321/MageBankSdk/tree/main/src/magebank/_response.py) with the same structure, the only difference being `await`able methods for reading the response content.
+The async client returns an [`AsyncAPIResponse`](https://github.com/stainless-sdks/magebank-python/tree/main/src/magebank/_response.py) with the same structure, the only difference being `await`able methods for reading the response content.
 
 #### `.with_streaming_response`
 
@@ -345,7 +346,7 @@ This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) con
 
 We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/Accelerator321/MageBankSdk/issues) with questions, bugs, or suggestions.
+We are keen for your feedback; please open an [issue](https://www.github.com/stainless-sdks/magebank-python/issues) with questions, bugs, or suggestions.
 
 ### Determining the installed version
 

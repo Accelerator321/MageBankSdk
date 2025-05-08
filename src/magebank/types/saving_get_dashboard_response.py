@@ -6,7 +6,7 @@ from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
 
-__all__ = ["SavingRetrieveDashboardResponse", "Agent"]
+__all__ = ["SavingGetDashboardResponse", "Agent"]
 
 
 class Agent(BaseModel):
@@ -35,7 +35,7 @@ class Agent(BaseModel):
     """Total balance including investment value"""
 
 
-class SavingRetrieveDashboardResponse(BaseModel):
+class SavingGetDashboardResponse(BaseModel):
     agents: Optional[List[Agent]] = None
     """Detailed information about investments by agent"""
 
