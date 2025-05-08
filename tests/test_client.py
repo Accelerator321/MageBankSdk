@@ -25,7 +25,7 @@ from magebank import Magebank, AsyncMagebank, APIResponseValidationError
 from magebank._types import Omit
 from magebank._models import BaseModel, FinalRequestOptions
 from magebank._constants import RAW_RESPONSE_HEADER
-from magebank._exceptions import MagebankError, APIStatusError, APITimeoutError, APIResponseValidationError
+from magebank._exceptions import APIStatusError, APITimeoutError, APIResponseValidationError
 from magebank._base_client import (
     DEFAULT_TIMEOUT,
     HTTPX_DEFAULT_TIMEOUT,
@@ -36,7 +36,6 @@ from magebank._base_client import (
 from .utils import update_env
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
-bearer_token = "My Bearer Token"
 api_key = "My API Key"
 
 
@@ -59,7 +58,7 @@ def _get_open_connections(client: Magebank | AsyncMagebank) -> int:
 
 
 class TestMagebank:
-    client = Magebank(base_url=base_url, bearer_token=bearer_token, api_key=api_key, _strict_response_validation=True)
+    client = Magebank(base_url=base_url, api_key=api_key, _strict_response_validation=True)
 
     @pytest.mark.respx(base_url=base_url)
     def test_raw_response(self, respx_mock: MockRouter) -> None:
@@ -85,10 +84,6 @@ class TestMagebank:
         copied = self.client.copy()
         assert id(copied) != id(self.client)
 
-        copied = self.client.copy(bearer_token="another My Bearer Token")
-        assert copied.bearer_token == "another My Bearer Token"
-        assert self.client.bearer_token == "My Bearer Token"
-
         copied = self.client.copy(api_key="another My API Key")
         assert copied.api_key == "another My API Key"
         assert self.client.api_key == "My API Key"
@@ -111,11 +106,7 @@ class TestMagebank:
 
     def test_copy_default_headers(self) -> None:
         client = Magebank(
-            base_url=base_url,
-            bearer_token=bearer_token,
-            api_key=api_key,
-            _strict_response_validation=True,
-            default_headers={"X-Foo": "bar"},
+            base_url=base_url, api_key=api_key, _strict_response_validation=True, default_headers={"X-Foo": "bar"}
         )
         assert client.default_headers["X-Foo"] == "bar"
 
@@ -149,11 +140,7 @@ class TestMagebank:
 
     def test_copy_default_query(self) -> None:
         client = Magebank(
-            base_url=base_url,
-            bearer_token=bearer_token,
-            api_key=api_key,
-            _strict_response_validation=True,
-            default_query={"foo": "bar"},
+            base_url=base_url, api_key=api_key, _strict_response_validation=True, default_query={"foo": "bar"}
         )
         assert _get_params(client)["foo"] == "bar"
 
@@ -278,11 +265,7 @@ class TestMagebank:
 
     def test_client_timeout_option(self) -> None:
         client = Magebank(
-            base_url=base_url,
-            bearer_token=bearer_token,
-            api_key=api_key,
-            _strict_response_validation=True,
-            timeout=httpx.Timeout(0),
+            base_url=base_url, api_key=api_key, _strict_response_validation=True, timeout=httpx.Timeout(0)
         )
 
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
@@ -293,11 +276,7 @@ class TestMagebank:
         # custom timeout given to the httpx client should be used
         with httpx.Client(timeout=None) as http_client:
             client = Magebank(
-                base_url=base_url,
-                bearer_token=bearer_token,
-                api_key=api_key,
-                _strict_response_validation=True,
-                http_client=http_client,
+                base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
             )
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
@@ -307,11 +286,7 @@ class TestMagebank:
         # no timeout given to the httpx client should not use the httpx default
         with httpx.Client() as http_client:
             client = Magebank(
-                base_url=base_url,
-                bearer_token=bearer_token,
-                api_key=api_key,
-                _strict_response_validation=True,
-                http_client=http_client,
+                base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
             )
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
@@ -321,11 +296,7 @@ class TestMagebank:
         # explicitly passing the default timeout currently results in it being ignored
         with httpx.Client(timeout=HTTPX_DEFAULT_TIMEOUT) as http_client:
             client = Magebank(
-                base_url=base_url,
-                bearer_token=bearer_token,
-                api_key=api_key,
-                _strict_response_validation=True,
-                http_client=http_client,
+                base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
             )
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
@@ -337,7 +308,6 @@ class TestMagebank:
             async with httpx.AsyncClient() as http_client:
                 Magebank(
                     base_url=base_url,
-                    bearer_token=bearer_token,
                     api_key=api_key,
                     _strict_response_validation=True,
                     http_client=cast(Any, http_client),
@@ -345,11 +315,7 @@ class TestMagebank:
 
     def test_default_headers_option(self) -> None:
         client = Magebank(
-            base_url=base_url,
-            bearer_token=bearer_token,
-            api_key=api_key,
-            _strict_response_validation=True,
-            default_headers={"X-Foo": "bar"},
+            base_url=base_url, api_key=api_key, _strict_response_validation=True, default_headers={"X-Foo": "bar"}
         )
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("x-foo") == "bar"
@@ -357,7 +323,6 @@ class TestMagebank:
 
         client2 = Magebank(
             base_url=base_url,
-            bearer_token=bearer_token,
             api_key=api_key,
             _strict_response_validation=True,
             default_headers={
@@ -370,26 +335,25 @@ class TestMagebank:
         assert request.headers.get("x-stainless-lang") == "my-overriding-header"
 
     def test_validate_headers(self) -> None:
-        client = Magebank(
-            base_url=base_url, bearer_token=bearer_token, api_key=api_key, _strict_response_validation=True
-        )
+        client = Magebank(base_url=base_url, api_key=api_key, _strict_response_validation=True)
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("x-api-key") == api_key
 
-        with pytest.raises(MagebankError):
-            with update_env(**{"MAGEBANK_API_KEY": Omit()}):
-                client2 = Magebank(
-                    base_url=base_url, bearer_token=bearer_token, api_key=None, _strict_response_validation=True
-                )
-            _ = client2
+        with update_env(**{"MAGEBANK_API_KEY": Omit()}):
+            client2 = Magebank(base_url=base_url, api_key=None, _strict_response_validation=True)
+
+        with pytest.raises(
+            TypeError,
+            match="Could not resolve authentication method. Expected either auth_token or api_key to be set. Or for one of the `Authorization` or `x-api-key` headers to be explicitly omitted",
+        ):
+            client2._build_request(FinalRequestOptions(method="get", url="/foo"))
+
+        request2 = client2._build_request(FinalRequestOptions(method="get", url="/foo", headers={"x-api-key": Omit()}))
+        assert request2.headers.get("x-api-key") is None
 
     def test_default_query_option(self) -> None:
         client = Magebank(
-            base_url=base_url,
-            bearer_token=bearer_token,
-            api_key=api_key,
-            _strict_response_validation=True,
-            default_query={"query_param": "bar"},
+            base_url=base_url, api_key=api_key, _strict_response_validation=True, default_query={"query_param": "bar"}
         )
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
         url = httpx.URL(request.url)
@@ -589,12 +553,7 @@ class TestMagebank:
         assert response.foo == 2
 
     def test_base_url_setter(self) -> None:
-        client = Magebank(
-            base_url="https://example.com/from_init",
-            bearer_token=bearer_token,
-            api_key=api_key,
-            _strict_response_validation=True,
-        )
+        client = Magebank(base_url="https://example.com/from_init", api_key=api_key, _strict_response_validation=True)
         assert client.base_url == "https://example.com/from_init/"
 
         client.base_url = "https://example.com/from_setter"  # type: ignore[assignment]
@@ -603,21 +562,15 @@ class TestMagebank:
 
     def test_base_url_env(self) -> None:
         with update_env(MAGEBANK_BASE_URL="http://localhost:5000/from/env"):
-            client = Magebank(bearer_token=bearer_token, api_key=api_key, _strict_response_validation=True)
+            client = Magebank(api_key=api_key, _strict_response_validation=True)
             assert client.base_url == "http://localhost:5000/from/env/"
 
     @pytest.mark.parametrize(
         "client",
         [
+            Magebank(base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True),
             Magebank(
                 base_url="http://localhost:5000/custom/path/",
-                bearer_token=bearer_token,
-                api_key=api_key,
-                _strict_response_validation=True,
-            ),
-            Magebank(
-                base_url="http://localhost:5000/custom/path/",
-                bearer_token=bearer_token,
                 api_key=api_key,
                 _strict_response_validation=True,
                 http_client=httpx.Client(),
@@ -638,15 +591,9 @@ class TestMagebank:
     @pytest.mark.parametrize(
         "client",
         [
+            Magebank(base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True),
             Magebank(
                 base_url="http://localhost:5000/custom/path/",
-                bearer_token=bearer_token,
-                api_key=api_key,
-                _strict_response_validation=True,
-            ),
-            Magebank(
-                base_url="http://localhost:5000/custom/path/",
-                bearer_token=bearer_token,
                 api_key=api_key,
                 _strict_response_validation=True,
                 http_client=httpx.Client(),
@@ -667,15 +614,9 @@ class TestMagebank:
     @pytest.mark.parametrize(
         "client",
         [
+            Magebank(base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True),
             Magebank(
                 base_url="http://localhost:5000/custom/path/",
-                bearer_token=bearer_token,
-                api_key=api_key,
-                _strict_response_validation=True,
-            ),
-            Magebank(
-                base_url="http://localhost:5000/custom/path/",
-                bearer_token=bearer_token,
                 api_key=api_key,
                 _strict_response_validation=True,
                 http_client=httpx.Client(),
@@ -694,9 +635,7 @@ class TestMagebank:
         assert request.url == "https://myapi.com/foo"
 
     def test_copied_client_does_not_close_http(self) -> None:
-        client = Magebank(
-            base_url=base_url, bearer_token=bearer_token, api_key=api_key, _strict_response_validation=True
-        )
+        client = Magebank(base_url=base_url, api_key=api_key, _strict_response_validation=True)
         assert not client.is_closed()
 
         copied = client.copy()
@@ -707,9 +646,7 @@ class TestMagebank:
         assert not client.is_closed()
 
     def test_client_context_manager(self) -> None:
-        client = Magebank(
-            base_url=base_url, bearer_token=bearer_token, api_key=api_key, _strict_response_validation=True
-        )
+        client = Magebank(base_url=base_url, api_key=api_key, _strict_response_validation=True)
         with client as c2:
             assert c2 is client
             assert not c2.is_closed()
@@ -730,13 +667,7 @@ class TestMagebank:
 
     def test_client_max_retries_validation(self) -> None:
         with pytest.raises(TypeError, match=r"max_retries cannot be None"):
-            Magebank(
-                base_url=base_url,
-                bearer_token=bearer_token,
-                api_key=api_key,
-                _strict_response_validation=True,
-                max_retries=cast(Any, None),
-            )
+            Magebank(base_url=base_url, api_key=api_key, _strict_response_validation=True, max_retries=cast(Any, None))
 
     @pytest.mark.respx(base_url=base_url)
     def test_received_text_for_expected_json(self, respx_mock: MockRouter) -> None:
@@ -745,16 +676,12 @@ class TestMagebank:
 
         respx_mock.get("/foo").mock(return_value=httpx.Response(200, text="my-custom-format"))
 
-        strict_client = Magebank(
-            base_url=base_url, bearer_token=bearer_token, api_key=api_key, _strict_response_validation=True
-        )
+        strict_client = Magebank(base_url=base_url, api_key=api_key, _strict_response_validation=True)
 
         with pytest.raises(APIResponseValidationError):
             strict_client.get("/foo", cast_to=Model)
 
-        client = Magebank(
-            base_url=base_url, bearer_token=bearer_token, api_key=api_key, _strict_response_validation=False
-        )
+        client = Magebank(base_url=base_url, api_key=api_key, _strict_response_validation=False)
 
         response = client.get("/foo", cast_to=Model)
         assert isinstance(response, str)  # type: ignore[unreachable]
@@ -782,9 +709,7 @@ class TestMagebank:
     )
     @mock.patch("time.time", mock.MagicMock(return_value=1696004797))
     def test_parse_retry_after_header(self, remaining_retries: int, retry_after: str, timeout: float) -> None:
-        client = Magebank(
-            base_url=base_url, bearer_token=bearer_token, api_key=api_key, _strict_response_validation=True
-        )
+        client = Magebank(base_url=base_url, api_key=api_key, _strict_response_validation=True)
 
         headers = httpx.Headers({"retry-after": retry_after})
         options = FinalRequestOptions(method="get", url="/foo", max_retries=3)
@@ -902,9 +827,7 @@ class TestMagebank:
 
 
 class TestAsyncMagebank:
-    client = AsyncMagebank(
-        base_url=base_url, bearer_token=bearer_token, api_key=api_key, _strict_response_validation=True
-    )
+    client = AsyncMagebank(base_url=base_url, api_key=api_key, _strict_response_validation=True)
 
     @pytest.mark.respx(base_url=base_url)
     @pytest.mark.asyncio
@@ -932,10 +855,6 @@ class TestAsyncMagebank:
         copied = self.client.copy()
         assert id(copied) != id(self.client)
 
-        copied = self.client.copy(bearer_token="another My Bearer Token")
-        assert copied.bearer_token == "another My Bearer Token"
-        assert self.client.bearer_token == "My Bearer Token"
-
         copied = self.client.copy(api_key="another My API Key")
         assert copied.api_key == "another My API Key"
         assert self.client.api_key == "My API Key"
@@ -958,11 +877,7 @@ class TestAsyncMagebank:
 
     def test_copy_default_headers(self) -> None:
         client = AsyncMagebank(
-            base_url=base_url,
-            bearer_token=bearer_token,
-            api_key=api_key,
-            _strict_response_validation=True,
-            default_headers={"X-Foo": "bar"},
+            base_url=base_url, api_key=api_key, _strict_response_validation=True, default_headers={"X-Foo": "bar"}
         )
         assert client.default_headers["X-Foo"] == "bar"
 
@@ -996,11 +911,7 @@ class TestAsyncMagebank:
 
     def test_copy_default_query(self) -> None:
         client = AsyncMagebank(
-            base_url=base_url,
-            bearer_token=bearer_token,
-            api_key=api_key,
-            _strict_response_validation=True,
-            default_query={"foo": "bar"},
+            base_url=base_url, api_key=api_key, _strict_response_validation=True, default_query={"foo": "bar"}
         )
         assert _get_params(client)["foo"] == "bar"
 
@@ -1125,11 +1036,7 @@ class TestAsyncMagebank:
 
     async def test_client_timeout_option(self) -> None:
         client = AsyncMagebank(
-            base_url=base_url,
-            bearer_token=bearer_token,
-            api_key=api_key,
-            _strict_response_validation=True,
-            timeout=httpx.Timeout(0),
+            base_url=base_url, api_key=api_key, _strict_response_validation=True, timeout=httpx.Timeout(0)
         )
 
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
@@ -1140,11 +1047,7 @@ class TestAsyncMagebank:
         # custom timeout given to the httpx client should be used
         async with httpx.AsyncClient(timeout=None) as http_client:
             client = AsyncMagebank(
-                base_url=base_url,
-                bearer_token=bearer_token,
-                api_key=api_key,
-                _strict_response_validation=True,
-                http_client=http_client,
+                base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
             )
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
@@ -1154,11 +1057,7 @@ class TestAsyncMagebank:
         # no timeout given to the httpx client should not use the httpx default
         async with httpx.AsyncClient() as http_client:
             client = AsyncMagebank(
-                base_url=base_url,
-                bearer_token=bearer_token,
-                api_key=api_key,
-                _strict_response_validation=True,
-                http_client=http_client,
+                base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
             )
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
@@ -1168,11 +1067,7 @@ class TestAsyncMagebank:
         # explicitly passing the default timeout currently results in it being ignored
         async with httpx.AsyncClient(timeout=HTTPX_DEFAULT_TIMEOUT) as http_client:
             client = AsyncMagebank(
-                base_url=base_url,
-                bearer_token=bearer_token,
-                api_key=api_key,
-                _strict_response_validation=True,
-                http_client=http_client,
+                base_url=base_url, api_key=api_key, _strict_response_validation=True, http_client=http_client
             )
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
@@ -1184,7 +1079,6 @@ class TestAsyncMagebank:
             with httpx.Client() as http_client:
                 AsyncMagebank(
                     base_url=base_url,
-                    bearer_token=bearer_token,
                     api_key=api_key,
                     _strict_response_validation=True,
                     http_client=cast(Any, http_client),
@@ -1192,11 +1086,7 @@ class TestAsyncMagebank:
 
     def test_default_headers_option(self) -> None:
         client = AsyncMagebank(
-            base_url=base_url,
-            bearer_token=bearer_token,
-            api_key=api_key,
-            _strict_response_validation=True,
-            default_headers={"X-Foo": "bar"},
+            base_url=base_url, api_key=api_key, _strict_response_validation=True, default_headers={"X-Foo": "bar"}
         )
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("x-foo") == "bar"
@@ -1204,7 +1094,6 @@ class TestAsyncMagebank:
 
         client2 = AsyncMagebank(
             base_url=base_url,
-            bearer_token=bearer_token,
             api_key=api_key,
             _strict_response_validation=True,
             default_headers={
@@ -1217,26 +1106,25 @@ class TestAsyncMagebank:
         assert request.headers.get("x-stainless-lang") == "my-overriding-header"
 
     def test_validate_headers(self) -> None:
-        client = AsyncMagebank(
-            base_url=base_url, bearer_token=bearer_token, api_key=api_key, _strict_response_validation=True
-        )
+        client = AsyncMagebank(base_url=base_url, api_key=api_key, _strict_response_validation=True)
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("x-api-key") == api_key
 
-        with pytest.raises(MagebankError):
-            with update_env(**{"MAGEBANK_API_KEY": Omit()}):
-                client2 = AsyncMagebank(
-                    base_url=base_url, bearer_token=bearer_token, api_key=None, _strict_response_validation=True
-                )
-            _ = client2
+        with update_env(**{"MAGEBANK_API_KEY": Omit()}):
+            client2 = AsyncMagebank(base_url=base_url, api_key=None, _strict_response_validation=True)
+
+        with pytest.raises(
+            TypeError,
+            match="Could not resolve authentication method. Expected either auth_token or api_key to be set. Or for one of the `Authorization` or `x-api-key` headers to be explicitly omitted",
+        ):
+            client2._build_request(FinalRequestOptions(method="get", url="/foo"))
+
+        request2 = client2._build_request(FinalRequestOptions(method="get", url="/foo", headers={"x-api-key": Omit()}))
+        assert request2.headers.get("x-api-key") is None
 
     def test_default_query_option(self) -> None:
         client = AsyncMagebank(
-            base_url=base_url,
-            bearer_token=bearer_token,
-            api_key=api_key,
-            _strict_response_validation=True,
-            default_query={"query_param": "bar"},
+            base_url=base_url, api_key=api_key, _strict_response_validation=True, default_query={"query_param": "bar"}
         )
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
         url = httpx.URL(request.url)
@@ -1437,10 +1325,7 @@ class TestAsyncMagebank:
 
     def test_base_url_setter(self) -> None:
         client = AsyncMagebank(
-            base_url="https://example.com/from_init",
-            bearer_token=bearer_token,
-            api_key=api_key,
-            _strict_response_validation=True,
+            base_url="https://example.com/from_init", api_key=api_key, _strict_response_validation=True
         )
         assert client.base_url == "https://example.com/from_init/"
 
@@ -1450,21 +1335,17 @@ class TestAsyncMagebank:
 
     def test_base_url_env(self) -> None:
         with update_env(MAGEBANK_BASE_URL="http://localhost:5000/from/env"):
-            client = AsyncMagebank(bearer_token=bearer_token, api_key=api_key, _strict_response_validation=True)
+            client = AsyncMagebank(api_key=api_key, _strict_response_validation=True)
             assert client.base_url == "http://localhost:5000/from/env/"
 
     @pytest.mark.parametrize(
         "client",
         [
             AsyncMagebank(
-                base_url="http://localhost:5000/custom/path/",
-                bearer_token=bearer_token,
-                api_key=api_key,
-                _strict_response_validation=True,
+                base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True
             ),
             AsyncMagebank(
                 base_url="http://localhost:5000/custom/path/",
-                bearer_token=bearer_token,
                 api_key=api_key,
                 _strict_response_validation=True,
                 http_client=httpx.AsyncClient(),
@@ -1486,14 +1367,10 @@ class TestAsyncMagebank:
         "client",
         [
             AsyncMagebank(
-                base_url="http://localhost:5000/custom/path/",
-                bearer_token=bearer_token,
-                api_key=api_key,
-                _strict_response_validation=True,
+                base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True
             ),
             AsyncMagebank(
                 base_url="http://localhost:5000/custom/path/",
-                bearer_token=bearer_token,
                 api_key=api_key,
                 _strict_response_validation=True,
                 http_client=httpx.AsyncClient(),
@@ -1515,14 +1392,10 @@ class TestAsyncMagebank:
         "client",
         [
             AsyncMagebank(
-                base_url="http://localhost:5000/custom/path/",
-                bearer_token=bearer_token,
-                api_key=api_key,
-                _strict_response_validation=True,
+                base_url="http://localhost:5000/custom/path/", api_key=api_key, _strict_response_validation=True
             ),
             AsyncMagebank(
                 base_url="http://localhost:5000/custom/path/",
-                bearer_token=bearer_token,
                 api_key=api_key,
                 _strict_response_validation=True,
                 http_client=httpx.AsyncClient(),
@@ -1541,9 +1414,7 @@ class TestAsyncMagebank:
         assert request.url == "https://myapi.com/foo"
 
     async def test_copied_client_does_not_close_http(self) -> None:
-        client = AsyncMagebank(
-            base_url=base_url, bearer_token=bearer_token, api_key=api_key, _strict_response_validation=True
-        )
+        client = AsyncMagebank(base_url=base_url, api_key=api_key, _strict_response_validation=True)
         assert not client.is_closed()
 
         copied = client.copy()
@@ -1555,9 +1426,7 @@ class TestAsyncMagebank:
         assert not client.is_closed()
 
     async def test_client_context_manager(self) -> None:
-        client = AsyncMagebank(
-            base_url=base_url, bearer_token=bearer_token, api_key=api_key, _strict_response_validation=True
-        )
+        client = AsyncMagebank(base_url=base_url, api_key=api_key, _strict_response_validation=True)
         async with client as c2:
             assert c2 is client
             assert not c2.is_closed()
@@ -1580,11 +1449,7 @@ class TestAsyncMagebank:
     async def test_client_max_retries_validation(self) -> None:
         with pytest.raises(TypeError, match=r"max_retries cannot be None"):
             AsyncMagebank(
-                base_url=base_url,
-                bearer_token=bearer_token,
-                api_key=api_key,
-                _strict_response_validation=True,
-                max_retries=cast(Any, None),
+                base_url=base_url, api_key=api_key, _strict_response_validation=True, max_retries=cast(Any, None)
             )
 
     @pytest.mark.respx(base_url=base_url)
@@ -1595,16 +1460,12 @@ class TestAsyncMagebank:
 
         respx_mock.get("/foo").mock(return_value=httpx.Response(200, text="my-custom-format"))
 
-        strict_client = AsyncMagebank(
-            base_url=base_url, bearer_token=bearer_token, api_key=api_key, _strict_response_validation=True
-        )
+        strict_client = AsyncMagebank(base_url=base_url, api_key=api_key, _strict_response_validation=True)
 
         with pytest.raises(APIResponseValidationError):
             await strict_client.get("/foo", cast_to=Model)
 
-        client = AsyncMagebank(
-            base_url=base_url, bearer_token=bearer_token, api_key=api_key, _strict_response_validation=False
-        )
+        client = AsyncMagebank(base_url=base_url, api_key=api_key, _strict_response_validation=False)
 
         response = await client.get("/foo", cast_to=Model)
         assert isinstance(response, str)  # type: ignore[unreachable]
@@ -1633,9 +1494,7 @@ class TestAsyncMagebank:
     @mock.patch("time.time", mock.MagicMock(return_value=1696004797))
     @pytest.mark.asyncio
     async def test_parse_retry_after_header(self, remaining_retries: int, retry_after: str, timeout: float) -> None:
-        client = AsyncMagebank(
-            base_url=base_url, bearer_token=bearer_token, api_key=api_key, _strict_response_validation=True
-        )
+        client = AsyncMagebank(base_url=base_url, api_key=api_key, _strict_response_validation=True)
 
         headers = httpx.Headers({"retry-after": retry_after})
         options = FinalRequestOptions(method="get", url="/foo", max_retries=3)

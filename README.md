@@ -40,10 +40,10 @@ agent = client.agents_with.retrieve(
 print(agent.id)
 ```
 
-While you can provide a `bearer_token` keyword argument,
+While you can provide a `auth_token` keyword argument,
 we recommend using [python-dotenv](https://pypi.org/project/python-dotenv/)
-to add `MAGEBANK_BEARER_TOKEN="My Bearer Token"` to your `.env` file
-so that your Bearer Token is not stored in source control.
+to add `MAGEBANK_AUTH_TOKENOptional environment variable="My Auth Token"` to your `.env` file
+so that your Auth Token is not stored in source control.
 
 ## Async usage
 
