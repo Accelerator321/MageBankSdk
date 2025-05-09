@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.4 (2025-05-09)
+
+Full Changelog: [v0.1.0-alpha.3...v0.1.0-alpha.4](https://github.com/Accelerator321/MageBankSdk/compare/v0.1.0-alpha.3...v0.1.0-alpha.4)
+
+### Chores
+
+* **internal:** avoid errors for isinstance checks on proxies ([9436813](https://github.com/Accelerator321/MageBankSdk/commit/9436813dadb0a3d8ba52e2655c2e96e1fe5eed6a))
+
 ## 0.1.0-alpha.3 (2025-05-08)
 
 Full Changelog: [v0.1.0-alpha.2...v0.1.0-alpha.3](https://github.com/Accelerator321/MageBankSdk/compare/v0.1.0-alpha.2...v0.1.0-alpha.3)
