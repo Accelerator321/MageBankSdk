@@ -86,14 +86,14 @@ class Magebank(SyncAPIClient):
 
         This automatically infers the following arguments from their corresponding environment variables if they are not provided:
         - `api_key` from `MAGEBANK_API_KEY`
-        - `auth_token` from `MAGEBANK_AUTH_TOKENOptional environment variable`
+        - `auth_token` from `MAGEBANK_AUTH_TOKEN`
         """
         if api_key is None:
             api_key = os.environ.get("MAGEBANK_API_KEY")
         self.api_key = api_key
 
         if auth_token is None:
-            auth_token = os.environ.get("MAGEBANK_AUTH_TOKENOptional environment variable")
+            auth_token = os.environ.get("MAGEBANK_AUTH_TOKEN")
         self.auth_token = auth_token
 
         if base_url is None:
@@ -301,14 +301,14 @@ class AsyncMagebank(AsyncAPIClient):
 
         This automatically infers the following arguments from their corresponding environment variables if they are not provided:
         - `api_key` from `MAGEBANK_API_KEY`
-        - `auth_token` from `MAGEBANK_AUTH_TOKENOptional environment variable`
+        - `auth_token` from `MAGEBANK_AUTH_TOKEN`
         """
         if api_key is None:
             api_key = os.environ.get("MAGEBANK_API_KEY")
         self.api_key = api_key
 
         if auth_token is None:
-            auth_token = os.environ.get("MAGEBANK_AUTH_TOKENOptional environment variable")
+            auth_token = os.environ.get("MAGEBANK_AUTH_TOKEN")
         self.auth_token = auth_token
 
         if base_url is None:

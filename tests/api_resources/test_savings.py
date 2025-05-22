@@ -122,7 +122,7 @@ class TestSavings:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Mock server cannot handle dynamic path parameters")
     @parametrize
     def test_method_list_investments_by_agent(self, client: Magebank) -> None:
         saving = client.savings.list_investments_by_agent(
@@ -130,7 +130,7 @@ class TestSavings:
         )
         assert_matches_type(SavingListInvestmentsByAgentResponse, saving, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Mock server cannot handle dynamic path parameters")
     @parametrize
     def test_raw_response_list_investments_by_agent(self, client: Magebank) -> None:
         response = client.savings.with_raw_response.list_investments_by_agent(
@@ -142,7 +142,7 @@ class TestSavings:
         saving = response.parse()
         assert_matches_type(SavingListInvestmentsByAgentResponse, saving, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Mock server cannot handle dynamic path parameters")
     @parametrize
     def test_streaming_response_list_investments_by_agent(self, client: Magebank) -> None:
         with client.savings.with_streaming_response.list_investments_by_agent(
@@ -156,7 +156,7 @@ class TestSavings:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Mock server cannot handle dynamic path parameters")
     @parametrize
     def test_path_params_list_investments_by_agent(self, client: Magebank) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `agent_id` but received ''"):
@@ -295,7 +295,7 @@ class TestAsyncSavings:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Mock server cannot handle dynamic path parameters")
     @parametrize
     async def test_method_list_investments_by_agent(self, async_client: AsyncMagebank) -> None:
         saving = await async_client.savings.list_investments_by_agent(
@@ -303,7 +303,7 @@ class TestAsyncSavings:
         )
         assert_matches_type(SavingListInvestmentsByAgentResponse, saving, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Mock server cannot handle dynamic path parameters")
     @parametrize
     async def test_raw_response_list_investments_by_agent(self, async_client: AsyncMagebank) -> None:
         response = await async_client.savings.with_raw_response.list_investments_by_agent(
@@ -315,7 +315,7 @@ class TestAsyncSavings:
         saving = await response.parse()
         assert_matches_type(SavingListInvestmentsByAgentResponse, saving, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Mock server cannot handle dynamic path parameters")
     @parametrize
     async def test_streaming_response_list_investments_by_agent(self, async_client: AsyncMagebank) -> None:
         async with async_client.savings.with_streaming_response.list_investments_by_agent(
@@ -329,7 +329,7 @@ class TestAsyncSavings:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Mock server cannot handle dynamic path parameters")
     @parametrize
     async def test_path_params_list_investments_by_agent(self, async_client: AsyncMagebank) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `agent_id` but received ''"):
