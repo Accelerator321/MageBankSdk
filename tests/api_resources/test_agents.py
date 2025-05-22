@@ -77,7 +77,7 @@ class TestAgents:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Mock server cannot handle dynamic path parameters")
     @parametrize
     def test_method_retrieve(self, client: Magebank) -> None:
         agent = client.agents.retrieve(
@@ -85,7 +85,7 @@ class TestAgents:
         )
         assert_matches_type(AgentRetrieveResponse, agent, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Mock server cannot handle dynamic path parameters")
     @parametrize
     def test_raw_response_retrieve(self, client: Magebank) -> None:
         response = client.agents.with_raw_response.retrieve(
@@ -97,7 +97,7 @@ class TestAgents:
         agent = response.parse()
         assert_matches_type(AgentRetrieveResponse, agent, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Mock server cannot handle dynamic path parameters")
     @parametrize
     def test_streaming_response_retrieve(self, client: Magebank) -> None:
         with client.agents.with_streaming_response.retrieve(
@@ -111,7 +111,7 @@ class TestAgents:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Mock server cannot handle dynamic path parameters")
     @parametrize
     def test_path_params_retrieve(self, client: Magebank) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
@@ -280,7 +280,7 @@ class TestAsyncAgents:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Mock server cannot handle dynamic path parameters")
     @parametrize
     async def test_method_retrieve(self, async_client: AsyncMagebank) -> None:
         agent = await async_client.agents.retrieve(
@@ -288,7 +288,7 @@ class TestAsyncAgents:
         )
         assert_matches_type(AgentRetrieveResponse, agent, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Mock server cannot handle dynamic path parameters")
     @parametrize
     async def test_raw_response_retrieve(self, async_client: AsyncMagebank) -> None:
         response = await async_client.agents.with_raw_response.retrieve(
@@ -300,7 +300,7 @@ class TestAsyncAgents:
         agent = await response.parse()
         assert_matches_type(AgentRetrieveResponse, agent, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Mock server cannot handle dynamic path parameters")
     @parametrize
     async def test_streaming_response_retrieve(self, async_client: AsyncMagebank) -> None:
         async with async_client.agents.with_streaming_response.retrieve(
@@ -314,7 +314,7 @@ class TestAsyncAgents:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Mock server cannot handle dynamic path parameters")
     @parametrize
     async def test_path_params_retrieve(self, async_client: AsyncMagebank) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
