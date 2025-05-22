@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.1.0-alpha.5 (2025-05-22)
+
+Full Changelog: [v0.1.0-alpha.4...v0.1.0-alpha.5](https://github.com/Accelerator321/MageBankSdk/compare/v0.1.0-alpha.4...v0.1.0-alpha.5)
+
+### Features
+
+* **api:** update via SDK Studio ([4b5a8b7](https://github.com/Accelerator321/MageBankSdk/commit/4b5a8b710b5501fba68926e42065a90005e44a87))
+* **api:** update via SDK Studio ([0539157](https://github.com/Accelerator321/MageBankSdk/commit/0539157e165eb074e48f53a6260e0430c088b60e))
+
+
+### Bug Fixes
+
+* **package:** support direct resource imports ([586ae93](https://github.com/Accelerator321/MageBankSdk/commit/586ae93caaf63b2e8d3020458946472b9d7ad68d))
+
+
+### Chores
+
+* **ci:** fix installation instructions ([f9b3c7e](https://github.com/Accelerator321/MageBankSdk/commit/f9b3c7eeb0efff8dbf614d03118509071049d159))
+* **ci:** upload sdks to package manager ([b23373e](https://github.com/Accelerator321/MageBankSdk/commit/b23373effd0ffff1f24b6549801b706796ca855e))
+* **docs:** grammar improvements ([9c7857a](https://github.com/Accelerator321/MageBankSdk/commit/9c7857a828f5b31475fcbdaec153feabd434d1e9))
+* **internal:** codegen related update ([9f708e6](https://github.com/Accelerator321/MageBankSdk/commit/9f708e63fe83854d31f6468ae8d1d8cafbd2ace3))
+* update SDK settings ([2b777c9](https://github.com/Accelerator321/MageBankSdk/commit/2b777c90b359e2e1daee820dfb588ffc2b799c77))
+
 ## 0.1.0-alpha.4 (2025-05-09)
 
 Full Changelog: [v0.1.0-alpha.3...v0.1.0-alpha.4](https://github.com/Accelerator321/MageBankSdk/compare/v0.1.0-alpha.3...v0.1.0-alpha.4)
