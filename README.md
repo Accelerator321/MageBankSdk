@@ -1,3 +1,5 @@
+
+
 ## Table of Contents
 
 - [Installation](#installation)
@@ -36,9 +38,6 @@
 - [Versioning](#versioning)
 - [Requirements](#requirements)
 - [Contributing](#contributing)
-
-
-
 
 ## Documentation
 
@@ -101,9 +100,9 @@ Functionality between the synchronous and asynchronous clients is otherwise iden
 
 ## API Methods & Examples
 
-# Agent Operations
+### Agent Operations
 
-## Retrieve agent by ID
+#### Retrieve agent by ID
 ```python
 agent = mage.agents_with.retrieve("agent_12345")
 print(f"Agent Name: {agent.name}, Balance: {agent.balance} {agent.currency}")
@@ -640,6 +639,10 @@ interest_calculation = mage.investment.calculate_interest(
 print(f"Calculated interest: {interest_calculation.interest}")
 print(f"Total return: {interest_calculation.total_return}")
 print(f"APY: {interest_calculation.apy}%")
+
+# Get detailed calculation as dictionary
+calculation_data = interest_calculation.to_dict()
+print(f"Calculation steps: {calculation_data['calculation']['steps']}")
 ```
 
 **Parameters:**
@@ -649,16 +652,49 @@ print(f"APY: {interest_calculation.apy}%")
 - **Optional:**
   - `currency` (string) - Currency for the investment
 
+**Response Schema:**
+```python
+{
+    "principal": 1000,
+    "days": 365,
+    "interestRate": 4.5,
+    "interestEarned": "45.00",
+    "totalAmount": "1045.00",
+    "annualYield": "4.50%",
+    "calculation": {
+        "formula": "principal × rate × (days ÷ 365)",
+        "steps": [
+            "1000 × 0.045 × 365/365",
+            "1000 × 0.045 × 1.000000",
+            "1000 × 0.045000",
+            "45.000000"
+        ]
+    }
+}
+```
+
 #### Retrieve current interest rate
 ```python
 interest_rate = mage.investment.retrieve_interest_rate()
 print(f"Current interest rate: {interest_rate.rate}%")
 print(f"Minimum term: {interest_rate.min_term_months} months")
 print(f"Maximum term: {interest_rate.max_term_months} months")
+
+# Get interest rate details as dictionary
+rate_data = interest_rate.to_dict()
+print(f"Last updated: {rate_data['lastUpdated']}")
 ```
 
 **Parameters:**
 - None required
+
+**Response Schema:**
+```python
+{
+    "interestRate": 4.5,
+    "lastUpdated": "2025-05-04T12:00:00.000Z"
+}
+```
 
 ### User Operations
 
@@ -667,10 +703,26 @@ print(f"Maximum term: {interest_rate.max_term_months} months")
 wallet = mage.user.retrieve_wallet_balance()
 print(f"Current balance: {wallet.balance} {wallet.currency}")
 print(f"Available balance: {wallet.available_balance} {wallet.currency}")
+
+# Get wallet details as dictionary
+wallet_data = wallet.to_dict()
+print(f"Balance source: {wallet_data['source']}")
+print(f"Message: {wallet_data['message']}")
 ```
 
 **Parameters:**
 - None required
+
+**Response Schema:**
+```python
+{
+    "success": true,
+    "balance": "100.50",
+    "asset": "USDC",
+    "message": "Balance retrieved successfully",
+    "source": "blockchain"
+}
+```
 
 ### Transaction Operations
 
@@ -685,12 +737,35 @@ summary = mage.transactions.retrieve_summary(
 print(f"Total transactions: {summary.count}")
 print(f"Total volume: {summary.volume} {summary.currency}")
 print(f"Average transaction size: {summary.average}")
+
+# Get complete summary as dictionary
+summary_data = summary.to_dict()
+print(f"Summary details: {summary_data}")
 ```
 
 **Parameters:**
 - **Required:**
   - `start_date` (string) - Start date for the summary period
   - `end_date` (string) - End date for the summary period
+
+**Response Schema:**
+```python
+{
+    "count": 150,
+    "volume": "15000.00",
+    "currency": "USDC",
+    "average": "100.00",
+    "period": {
+        "start": "2025-01-01T00:00:00Z",
+        "end": "2025-04-30T23:59:59Z"
+    },
+    "breakdown": {
+        "deposits": 75,
+        "withdrawals": 45,
+        "payments": 30
+    }
+}
+```
 
 ## Available Response Types 
 
@@ -1005,8 +1080,6 @@ print(magebank.__version__)
 ## Requirements
 
 Python 3.8 or higher.
-
-
 
 ## Contributing
 
