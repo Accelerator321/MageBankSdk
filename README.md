@@ -101,9 +101,9 @@ Functionality between the synchronous and asynchronous clients is otherwise iden
 
 ## API Methods & Examples
 
-### Agent Operations
+# Agent Operations
 
-#### Retrieve agent by ID
+## Retrieve agent by ID
 ```python
 agent = mage.agents_with.retrieve("agent_12345")
 print(f"Agent Name: {agent.name}, Balance: {agent.balance} {agent.currency}")
@@ -1006,28 +1006,7 @@ print(magebank.__version__)
 
 Python 3.8 or higher.
 
-## Preserving Documentation
 
-This README is manually maintained. To ensure it doesn't get lost during Stainless builds:
-
-1. Store this file in a dedicated location:
-   ```
-   ./docs/custom/magebank-readme.md
-   ```
-
-2. Reference it in your Stainless configuration:
-   ```yaml
-   # stainless.yaml
-   readme:
-     path: "./docs/custom/magebank-readme.md"
-   ```
-
-3. Add this file to version control:
-   ```
-   git add ./docs/custom/magebank-readme.md
-   ```
-
-These steps will ensure your custom documentation persists across builds.
 
 ## Contributing
 
