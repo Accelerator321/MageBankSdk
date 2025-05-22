@@ -1,12 +1,44 @@
-# Magebank Python API library
+## Table of Contents
 
-[![PyPI version](https://img.shields.io/pypi/v/magebank.svg)](https://pypi.org/project/magebank/)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Async Usage](#async-usage)
+- [API Methods & Examples](#api-methods--examples)
+  - [Agent Operations](#agent-operations)
+    - [Retrieve agent by ID](#retrieve-agent-by-id)
+    - [Create a new agent](#create-a-new-agent)
+    - [Deposit funds into agent](#deposit-funds-into-agent)
+    - [Withdraw funds from agent](#withdraw-funds-from-agent)
+  - [Payment Operations](#payment-operations)
+    - [Approve a payment](#approve-a-payment)
+    - [Decline a payment](#decline-a-payment)
+    - [Export payment data](#export-payment-data)
+    - [Register a new payment](#register-a-new-payment)
+    - [List user payments](#list-user-payments)
+    - [Retrieve payment details](#retrieve-payment-details)
+  - [Savings Operations](#savings-operations)
+    - [Create savings deposit](#create-savings-deposit)
+    - [Withdraw from savings](#withdraw-from-savings)
+    - [List all investments](#list-all-investments)
+    - [List investments by agent](#list-investments-by-agent)
+    - [Retrieve savings dashboard](#retrieve-savings-dashboard)
+  - [Investment Operations](#investment-operations)
+    - [Calculate interest](#calculate-interest)
+    - [Retrieve current interest rate](#retrieve-current-interest-rate)
+  - [User Operations](#user-operations)
+    - [Retrieve wallet balance](#retrieve-wallet-balance)
+  - [Transaction Operations](#transaction-operations)
+    - [Get summary of transactions](#get-summary-of-transactions)
+- [Available Response Types](#available-response-types)
+- [Nested params](#nested-params)
+- [Handling errors](#handling-errors)
+- [Advanced](#advanced)
+- [Versioning](#versioning)
+- [Requirements](#requirements)
+- [Contributing](#contributing)
 
-The Magebank Python library provides convenient access to the Magebank REST API from any Python 3.8+
-application. The library includes type definitions for all request params and response fields,
-and offers both synchronous and asynchronous clients powered by [httpx](https://github.com/encode/httpx).
 
-It is generated with [Stainless](https://www.stainless.com/).
+
 
 ## Documentation
 
@@ -31,12 +63,10 @@ import os
 from magebank import Magebank
 
 mage = Magebank(
-    api_key=os.environ.get("MAGEBANK_API_KEY"),  # This is the default and can be omitted
+    api_key=os.environ.get("MAGEBANK_API_KEY"),
 )
 
-agent = mage.agents_with.retrieve(
-    "REPLACE_ME",
-)
+agent = mage.agents_with.retrieve("REPLACE_ME")
 print(agent.id)
 ```
 
@@ -55,14 +85,12 @@ import asyncio
 from magebank import AsyncMagebank
 
 mage = AsyncMagebank(
-    api_key=os.environ.get("MAGEBANK_API_KEY"),  # This is the default and can be omitted
+    api_key=os.environ.get("MAGEBANK_API_KEY"),
 )
 
 
 async def main() -> None:
-    agent = await mage.agents_with.retrieve(
-        "REPLACE_ME",
-    )
+    agent = await mage.agents_with.retrieve("REPLACE_ME")
     print(agent.id)
 
 
@@ -77,229 +105,572 @@ Functionality between the synchronous and asynchronous clients is otherwise iden
 
 #### Retrieve agent by ID
 ```python
-# Get an agent by its ID
-agent = mage.agents_with.retrieve(
-    "agent_12345"  # Required: id - string
-)
+agent = mage.agents_with.retrieve("agent_12345")
 print(f"Agent Name: {agent.name}, Balance: {agent.balance} {agent.currency}")
+
+# Convert to dictionary for easier manipulation
+agent_dict = agent.to_dict()
+print(agent_dict)
+```
+
+**Parameters:**
+- **Required:**
+  - `id` (string) - The unique identifier of the agent
+
+**Response Schema:**
+```python
+{
+    "id": "agent_k77NTwxp2Ym3JCmVsKtXQA",
+    "name": "Payment Assistant",
+    "description": "Handles payment processing for customer support",
+    "status": "active",
+    "walletAddress": "WalletAddress{ addressId: '0x9d20dE668c8F9fb431cf6D6BBA48ee60Fe8E2BAB', networkId: 'base-sepolia', walletId: '07f490dc-34e3-447f-9972-df2778fcb3c3' }",
+    "balance": "100",
+    "currency": "USDC",
+    "paymentRules": {
+        "dailyLimit": 1000,
+        "transactionLimit": 100,
+        "requireApprovalForAll": false,
+        "requireApprovalAboveAmount": 50
+    },
+    "tags": ["customer-support", "payments"],
+    "created": "2025-04-15T11:00:08.432269+00:00"
+}
 ```
 
 #### Create a new agent
 ```python
-# Create a new agent
 new_agent = mage.agents.create(
-    name="Business Expense Account",  # Required: name - string
-    userid="user_12345",              # Required: userid - string
-    # Optional parameters
-    balance=1000.00,                  # Optional: balance - number
-    currency="USD",                   # Optional: currency - string
-    dailylimit=200.00,                # Optional: dailylimit - number
-    description="Expense account for marketing team",  # Optional: description - string
-    requireapprovalaboveamount=500.00,  # Optional: requireapprovalaboveamount - number
-    requireapprovalforall=False,      # Optional: requireapprovalforall - boolean
-    tags=["marketing", "expenses"],   # Optional: tags - array of strings
-    transactionlimit=2000.00,         # Optional: transactionlimit - number
-    walletaddress="wallet_xyz123"     # Optional: walletaddress - string
+    name="Business Expense Account",
+    userid="user_12345",
+    balance=1000.00,
+    currency="USD",
+    dailylimit=200.00,
+    description="Expense account for marketing team",
+    requireapprovalaboveamount=500.00,
+    requireapprovalforall=False,
+    tags=["marketing", "expenses"],
+    transactionlimit=2000.00,
+    walletaddress="wallet_xyz123"
 )
 print(f"Created agent with ID: {new_agent.id}")
+
+# Convert response to dictionary
+agent_data = new_agent.to_dict()
+print(f"Full agent data: {agent_data}")
+```
+
+**Parameters:**
+- **Required:**
+  - `name` (string) - Name of the agent
+  - `userid` (string) - User ID associated with the agent
+- **Optional:**
+  - `balance` (number) - Initial balance for the agent
+  - `currency` (string) - Currency type (e.g., "USD")
+  - `dailylimit` (number) - Daily spending limit
+  - `description` (string) - Description of the agent's purpose
+  - `requireapprovalaboveamount` (number) - Amount above which approval is required
+  - `requireapprovalforall` (boolean) - Whether all transactions require approval
+  - `tags` (array of strings) - Tags for categorization
+  - `transactionlimit` (number) - Maximum transaction amount
+  - `walletaddress` (string) - Associated wallet address
+
+**Response Schema:**
+```python
+{
+    "id": "agent_bRSEFnMRD1fvkMM39hzPdM",
+    "apikey": "mag_eJwVyN0OgiAYANA3cprT1qV_tY8E0jCVuyILSMtNG-LTt87l6SySt4NQVCGoVvCIggneZSASCOE1NpcE7ZzOopH_Q1c-12A4K4e8zgxnMJM0sjjxFE3xJmc4wDUsre4lGUpJzzDB0Mt7AiFmwiUaAppin1ijeCMN6M9C1mKD12ihTPiPwjkNZXQPme6DbGlNBc9aPfcCbb_dMRb2MbE-vqIKzdgtfgVGPxc",
+    "name": "Payment Assistant",
+    "description": "Handles payment processing for customer support",
+    "status": "active",
+    "walletAddress": {
+        "addressId": "",
+        "networkId": "base-sepolia",
+        "walletId": ""
+    },
+    "balance": "6",
+    "currency": "USDC",
+    "paymentRules": {
+        "dailyLimit": 1000,
+        "transactionLimit": 100,
+        "requireApprovalAboveAmount": 50,
+        "requireApprovalForAll": false
+    },
+    "tags": ["customer-support", "payments"],
+    "created": "2025-05-03T18:52:39.911685+00:00",
+    "transferResult": {
+        "success": true,
+        "txHash": "0x123...abc",
+        "message": "Successfully transferred 6 USDC from user to agent wallet"
+    },
+    "faucetTransaction": {
+        "success": true,
+        "txHash": "0xabc...123",
+        "message": "ETH testnet funds received via faucet"
+    }
+}
 ```
 
 #### Deposit funds into agent
 ```python
-# Deposit funds into an agent
 deposit = mage.agents.deposit(
-    agentid="agent_12345",  # Required: agentid - string
-    amount=500.00,          # Required: amount - number
-    userid="user_12345",    # Required: userid - string
-    currency="USD"          # Optional: currency - string
+    agentid="agent_12345",
+    amount=500.00,
+    userid="user_12345",
+    currency="USD"
 )
 print(f"Deposit successful: {deposit.id}, New balance: {deposit.new_balance}")
+
+# Access response data as dictionary
+deposit_data = deposit.to_dict()
+print(f"Transaction hash: {deposit_data['txHash']}")
+```
+
+**Parameters:**
+- **Required:**
+  - `agentid` (string) - ID of the agent to deposit into
+  - `amount` (number) - Amount to deposit
+  - `userid` (string) - ID of the user making the deposit
+- **Optional:**
+  - `currency` (string) - Currency of the deposit
+
+**Response Schema:**
+```python
+{
+    "success": true,
+    "txHash": "0x123...abc",
+    "message": "Successfully deposited 50 USDC to agent",
+    "updatedBalance": "150"
+}
 ```
 
 #### Withdraw funds from agent
 ```python
-# Withdraw funds from an agent
 withdrawal = mage.agents.withdraw(
-    agentid="agent_12345",  # Required: agentid - string
-    amount=200.00,          # Required: amount - number
-    userid="user_12345",    # Required: userid - string
-    currency="USD"          # Optional: currency - string
+    agentid="agent_12345",
+    amount=200.00,
+    userid="user_12345",
+    currency="USD"
 )
 print(f"Withdrawal successful: {withdrawal.id}, New balance: {withdrawal.new_balance}")
+
+# Convert to dictionary for processing
+withdrawal_data = withdrawal.to_dict()
+if withdrawal_data['success']:
+    print(f"Transaction completed: {withdrawal_data['message']}")
+```
+
+**Parameters:**
+- **Required:**
+  - `agentid` (string) - ID of the agent to withdraw from
+  - `amount` (number) - Amount to withdraw
+  - `userid` (string) - ID of the user making the withdrawal
+- **Optional:**
+  - `currency` (string) - Currency of the withdrawal
+
+**Response Schema:**
+```python
+{
+    "success": true,
+    "txHash": "0x123...abc",
+    "message": "Successfully withdrew 50 USDC from agent to user",
+    "updatedBalance": "50"
+}
 ```
 
 ### Payment Operations
 
 #### Approve a payment
 ```python
-# Approve a pending payment
-approval = mage.payments.set_approve(
-    paymentId="payment_12345"  # Required: paymentId - string
-)
+approval = mage.payments.set_approve(paymentId="payment_12345")
 print(f"Payment approved: {approval.status}")
+
+# Get response details as dictionary
+approval_data = approval.to_dict()
+print(f"Approval message: {approval_data['message']}")
+```
+
+**Parameters:**
+- **Required:**
+  - `paymentId` (string) - ID of the payment to approve
+
+**Response Schema:**
+```python
+{
+    "message": "Approval Status Done."
+}
 ```
 
 #### Decline a payment
 ```python
-# Decline a pending payment
-decline = mage.payments.set_decline(
-    paymentId="payment_12345"  # Required: paymentId - string
-)
+decline = mage.payments.set_decline(paymentId="payment_12345")
 print(f"Payment declined: {decline.status}")
+
+# Access full decline response
+decline_data = decline.to_dict()
+print(f"Status: {decline_data['status']}")
+print(f"Message: {decline_data['message']}")
+```
+
+**Parameters:**
+- **Required:**
+  - `paymentId` (string) - ID of the payment to decline
+
+**Response Schema:**
+```python
+{
+    "message": "Payment declined successfully",
+    "status": "Decline",
+    "txHash": null
+}
 ```
 
 #### Export payment data
 ```python
 from datetime import date
 
-# Export payment data for a specific date range
 export = mage.payments.export(
-    format="csv",           # Required: format - string
-    dateRange={             # Optional: dateRange - object
-        "start": date.fromisoformat("2025-01-01"),  # Optional: start - string
-        "end": date.fromisoformat("2025-04-30")     # Optional: end - string
+    format="csv",
+    dateRange={
+        "start": date.fromisoformat("2025-01-01"),
+        "end": date.fromisoformat("2025-04-30")
     }
 )
 print(f"Export generated: {export.url}")
+
+# Get export details as dictionary
+export_data = export.to_dict()
+print(f"Export format: {export_data['format']}")
+print(f"Download URL: {export_data['url']}")
+```
+
+**Parameters:**
+- **Required:**
+  - `format` (string) - Export format (e.g., "csv")
+- **Optional:**
+  - `dateRange` (object) - Date range for export
+    - `start` (string) - Start date in ISO format
+    - `end` (string) - End date in ISO format
+
+**Response Schema:**
+```python
+{
+    "url": "https://example.com/export/payments_2025-01-01_2025-04-30.csv",
+    "format": "csv",
+    "dateRange": {
+        "start": "2025-01-01",
+        "end": "2025-04-30"
+    },
+    "recordCount": 150
+}
 ```
 
 #### Register a new payment
 ```python
-# Register a new payment
 payment = mage.payments.register(
-    name="Office Supplies Purchase",  # Required: name - string
-    paymentdetails={                  # Required: paymentdetails - object
-        "amount": 149.99,             # Required: amount - number
-        "currency": "USD",            # Required: currency - string
-        "method": "bank_transfer"     # Required: method - string
+    name="Office Supplies Purchase",
+    paymentdetails={
+        "amount": 149.99,
+        "currency": "USD",
+        "method": "bank_transfer"
     },
-    receiveragentid="agent_67890",    # Required: receiveragentid - string
-    senderagentid="agent_12345",      # Required: senderagentid - string
-    # Optional parameters
-    contactdetails={                  # Optional: contactdetails - object
-        "email": "accounting@example.com",        # Optional: email - string
-        "phoneNumber": "+15551234567"             # Optional: phoneNumber - string
+    receiveragentid="agent_67890",
+    senderagentid="agent_12345",
+    contactdetails={
+        "email": "accounting@example.com",
+        "phoneNumber": "+15551234567"
     },
-    tags=["office", "supplies"],      # Optional: tags - array of strings
-    type="expense"                    # Optional: type - string
+    tags=["office", "supplies"],
+    type="expense"
 )
 print(f"Payment registered with ID: {payment.id}, Status: {payment.status}")
+
+# Convert payment response to dictionary
+payment_data = payment.to_dict()
+print(f"Payment details: {payment_data}")
+```
+
+**Parameters:**
+- **Required:**
+  - `name` (string) - Name/description of the payment
+  - `paymentdetails` (object) - Payment details
+    - `amount` (number) - Payment amount
+    - `currency` (string) - Payment currency
+    - `method` (string) - Payment method
+  - `receiveragentid` (string) - ID of the receiving agent
+  - `senderagentid` (string) - ID of the sending agent
+- **Optional:**
+  - `contactdetails` (object) - Contact information
+    - `email` (string) - Email address
+    - `phoneNumber` (string) - Phone number
+  - `tags` (array of strings) - Payment tags
+  - `type` (string) - Type of payment
+
+**Response Schema:**
+```python
+{
+    "id": "payee_wDG5cavUCoK53uvFzTvkey",
+    "name": "Vendor XYZ2",
+    "type": "External",
+    "status": "New",
+    "createdat": "2025-04-17T10:28:18.512792",
+    "approvalRequired": true
+}
 ```
 
 #### List user payments
 ```python
-# Get all payments for a user
 all_payments = mage.user.list_payments()
 print(f"Found {len(all_payments.results)} payments")
 
-# Get only approved payments
-approved_payments = mage.user.list_payments(
-    approvalStatus="approved"  # Optional: approvalStatus - string
-)
+approved_payments = mage.user.list_payments(approvalStatus="approved")
 print(f"Found {len(approved_payments.results)} approved payments")
+
+# Convert payments list to dictionary for processing
+payments_data = all_payments.to_dict()
+for payment in payments_data['results']:
+    print(f"Payment {payment['id']}: {payment['direction']} - {payment['paymentdetails']['amount']} {payment['paymentdetails']['currency']}")
+```
+
+**Parameters:**
+- **Optional:**
+  - `approvalStatus` (string) - Filter by approval status
+
+**Response Schema:**
+```python
+[
+    {
+        "id": "payee_8tJo7vZb1RKo4oeyWuqgK",
+        "senderagentid": "agent_8tJo7vZb1RKo4oeyWuqgK",
+        "receiveragentid": "agent_7tJo7vZb1RKo4oeyWuqgK",
+        "initiatedBy": "Alice",
+        "receivedBy": "Bob",
+        "direction": "outgoing",
+        "name": "Payment from Alice to Bob",
+        "approvalstatus": "Approved",
+        "createdat": "2025-04-07T12:00:00Z",
+        "type": "EXTERNAL",
+        "paymentdetails": {
+            "method": "CRYPTO_ADDRESS",
+            "amount": 100,
+            "currency": "USDC"
+        }
+    }
+]
+```
+
+#### Retrieve payment details
+```python
+payment = mage.payments.retrieve("payment_12345")
+print(f"Payment: {payment.id}")
+print(f"Status: {payment.status}")
+print(f"Amount: {payment.amount} {payment.currency}")
+print(f"Created: {payment.created_at}")
+
+# Get full payment details as dictionary
+payment_data = payment.to_dict()
+print(f"Full payment data: {payment_data}")
+```
+
+**Parameters:**
+- **Required:**
+  - `id` (string) - ID of the payment to retrieve
+
+**Response Schema:**
+```python
+{
+    "id": "payee_wDG5cavUCoK53uvFzTvkey",
+    "name": "Vendor XYZ Payment",
+    "type": "EXTERNAL",
+    "senderagentid": "agent_eC6ZezevNsqxvoKmQrUuoU",
+    "receiveragentid": "agent_k77NTwxp2Ym3JCmVsKtXQA",
+    "status": "New",
+    "approvalstatus": "Approved, Declined, Pending, Waiting, Waiting for Sender Approval",
+    "approvalrequired": true,
+    "paymentdetails": {
+        "method": "CRYPTO_ADDRESS",
+        "amount": 6,
+        "currency": "USDC"
+    },
+    "contactdetails": {
+        "email": "contact@vendorxyz.com",
+        "phoneNumber": "+1234567890"
+    },
+    "tags": ["vendor", "regular"],
+    "createdat": "2025-04-17T10:28:18.512792+00:00",
+    "approvedat": "2025-04-17T11:30:00.000000+00:00"
+}
 ```
 
 ### Savings Operations
 
 #### Create savings deposit
 ```python
-# Create a savings deposit
 deposit = mage.savings.deposit(
-    agentId="agent_12345",  # Required: agentId - string
-    amount=1000.00          # Required: amount - number
+    agentId="agent_12345",
+    amount=1000.00
 )
 print(f"Investment created: {deposit.investment_id}, APY: {deposit.apy}%")
+
+# Get deposit response as dictionary
+deposit_data = deposit.to_dict()
+print(f"Success: {deposit_data['success']}")
+print(f"Message: {deposit_data['message']}")
+```
+
+**Parameters:**
+- **Required:**
+  - `agentId` (string) - ID of the agent to deposit from
+  - `amount` (number) - Amount to invest in savings
+
+**Response Schema:**
+```python
+{
+    "success": true,
+    "message": "Successfully invested 0.5 USDC."
+}
 ```
 
 #### Withdraw from savings
 ```python
-# Withdraw from savings
-withdrawal = mage.savings.withdraw(
-    investmentId="investment_12345"  # Required: investmentId - string
-)
+withdrawal = mage.savings.withdraw(investmentId="investment_12345")
 print(f"Withdrawal successful: {withdrawal.amount} {withdrawal.currency}")
+
+# Get withdrawal details as dictionary
+withdrawal_data = withdrawal.to_dict()
+print(f"Withdrawal status: {withdrawal_data['success']}")
+print(f"Message: {withdrawal_data['message']}")
 ```
 
-### Investment Operations
+**Parameters:**
+- **Required:**
+  - `investmentId` (string) - ID of the investment to withdraw from
 
-#### Calculate interest
+**Response Schema:**
 ```python
-# Calculate interest based on investment parameters
-interest_calculation = mage.investment.calculate_interest(
-    amount=10000,           # Required: amount - number
-    term_months=12,         # Required: term_months - number
-    currency="USD"          # Optional: currency - string
-)
-print(f"Calculated interest: {interest_calculation.interest}")
-print(f"Total return: {interest_calculation.total_return}")
-print(f"APY: {interest_calculation.apy}%")
+{
+    "success": true,
+    "message": "Withdrawal completed successfully."
+}
 ```
-
-#### Retrieve current interest rate
-```python
-# Get the current interest rate with no parameters
-interest_rate = mage.investment.retrieve_interest_rate()
-print(f"Current interest rate: {interest_rate.rate}%")
-print(f"Minimum term: {interest_rate.min_term_months} months")
-print(f"Maximum term: {interest_rate.max_term_months} months")
-```
-
-### User Operations
-
-#### List user payments (already included above)
-
-#### Retrieve wallet balance
-```python
-# Get the current wallet balance with no parameters
-wallet = mage.user.retrieve_wallet_balance()
-print(f"Current balance: {wallet.balance} {wallet.currency}")
-print(f"Available balance: {wallet.available_balance} {wallet.currency}")
-```
-
-### Savings Operations (Additional Methods)
 
 #### List all investments
 ```python
-# List all investments with no parameters
 investments = mage.savings.list_investments()
 print(f"Total investments: {len(investments.investments)}")
-for investment in investments.investments:
-    print(f"Investment ID: {investment.id}, Amount: {investment.amount} {investment.currency}")
+
+# Convert to dictionary for detailed processing
+investments_data = investments.to_dict()
+for investment in investments_data['investments']:
+    print(f"Investment ID: {investment['id']}, Amount: {investment['amount']} {investment['currency']}")
+```
+
+**Parameters:**
+- None required
+
+**Response Schema:**
+```python
+{
+    "investments": [
+        {
+            "id": "inv_k77NTwxp2Ym3JCmVsKtXQA",
+            "agent_id": "agent_k77NTwxp2Ym3JCmVsKtXQA",
+            "amount": 1000,
+            "invested_at": "2025-04-15T11:00:08.432269+00:00",
+            "status": "active",
+            "current_value": "1050.00",
+            "interest_earned": "50.00"
+        }
+    ]
+}
 ```
 
 #### List investments by agent
 ```python
-# List investments for a specific agent
-agent_investments = mage.savings.list_investments_by_agent(
-    agent_id="agent_12345"  # Required: agent_id - string
-)
+agent_investments = mage.savings.list_investments_by_agent(agent_id="agent_12345")
 print(f"Agent has {len(agent_investments.investments)} investments")
-for investment in agent_investments.investments:
-    print(f"Investment ID: {investment.id}, Amount: {investment.amount} {investment.currency}")
+
+# Convert response to dictionary
+investments_data = agent_investments.to_dict()
+for investment in investments_data['investments']:
+    print(f"Investment ID: {investment['id']}, Amount: {investment['amount']} {investment['currency']}")
+```
+
+**Parameters:**
+- **Required:**
+  - `agent_id` (string) - ID of the agent to list investments for
+
+**Response Schema:**
+```python
+{
+    "investments": [
+        {
+            "id": "inv_k77NTwxp2Ym3JCmVsKtXQA",
+            "agent_id": "agent_k77NTwxp2Ym3JCmVsKtXQA",
+            "amount": 1000,
+            "invested_at": "2025-04-15T11:00:08.432269+00:00",
+            "status": "active",
+            "current_value": "1050.00",
+            "interest_earned": "50.00"
+        }
+    ]
+}
 ```
 
 #### Retrieve savings dashboard
 ```python
-# Get savings dashboard overview with no parameters
 dashboard = mage.savings.retrieve_dashboard()
 print(f"Total savings: {dashboard.total_savings} {dashboard.currency}")
 print(f"Total interest earned: {dashboard.total_interest_earned} {dashboard.currency}")
 print(f"Active investments: {dashboard.active_investments_count}")
 ```
 
-### Payment Operations (Additional Methods)
+**Parameters:**
+- None required
 
-#### Retrieve payment details
+### Investment Operations
+
+#### Calculate interest
 ```python
-# Get details of a specific payment
-payment = mage.payments.retrieve(
-    "payment_12345"  # Required: id - string
+interest_calculation = mage.investment.calculate_interest(
+    amount=10000,
+    term_months=12,
+    currency="USD"
 )
-print(f"Payment: {payment.id}")
-print(f"Status: {payment.status}")
-print(f"Amount: {payment.amount} {payment.currency}")
-print(f"Created: {payment.created_at}")
+print(f"Calculated interest: {interest_calculation.interest}")
+print(f"Total return: {interest_calculation.total_return}")
+print(f"APY: {interest_calculation.apy}%")
 ```
+
+**Parameters:**
+- **Required:**
+  - `amount` (number) - Investment amount
+  - `term_months` (number) - Investment term in months
+- **Optional:**
+  - `currency` (string) - Currency for the investment
+
+#### Retrieve current interest rate
+```python
+interest_rate = mage.investment.retrieve_interest_rate()
+print(f"Current interest rate: {interest_rate.rate}%")
+print(f"Minimum term: {interest_rate.min_term_months} months")
+print(f"Maximum term: {interest_rate.max_term_months} months")
+```
+
+**Parameters:**
+- None required
+
+### User Operations
+
+#### Retrieve wallet balance
+```python
+wallet = mage.user.retrieve_wallet_balance()
+print(f"Current balance: {wallet.balance} {wallet.currency}")
+print(f"Available balance: {wallet.available_balance} {wallet.currency}")
+```
+
+**Parameters:**
+- None required
 
 ### Transaction Operations
 
@@ -307,15 +678,19 @@ print(f"Created: {payment.created_at}")
 ```python
 from datetime import date
 
-# Get transaction summary for a date range
 summary = mage.transactions.retrieve_summary(
-    start_date="2025-01-01",  # Required: start_date - string
-    end_date="2025-04-30"     # Required: end_date - string
+    start_date="2025-01-01",
+    end_date="2025-04-30"
 )
 print(f"Total transactions: {summary.count}")
 print(f"Total volume: {summary.volume} {summary.currency}")
 print(f"Average transaction size: {summary.average}")
 ```
+
+**Parameters:**
+- **Required:**
+  - `start_date` (string) - Start date for the summary period
+  - `end_date` (string) - End date for the summary period
 
 ## Available Response Types 
 
@@ -394,9 +769,7 @@ from magebank import Magebank
 mage = Magebank()
 
 try:
-    mage.agents_with.retrieve(
-        "REPLACE_ME",
-    )
+    mage.agents_with.retrieve("REPLACE_ME")
 except magebank.APIConnectionError as e:
     print("The server could not be reached")
     print(e.__cause__)  # an underlying Exception, likely raised within httpx.
@@ -439,9 +812,7 @@ mage = Magebank(
 )
 
 # Or, configure per-request:
-mage.with_options(max_retries=5).agents_with.retrieve(
-    "REPLACE_ME",
-)
+mage.with_options(max_retries=5).agents_with.retrieve("REPLACE_ME")
 ```
 
 ### Timeouts
@@ -464,9 +835,7 @@ mage = Magebank(
 )
 
 # Override per-request:
-mage.with_options(timeout=5.0).agents_with.retrieve(
-    "REPLACE_ME",
-)
+mage.with_options(timeout=5.0).agents_with.retrieve("REPLACE_ME")
 ```
 
 On timeout, an `APITimeoutError` is thrown.
@@ -507,9 +876,7 @@ The "raw" Response object can be accessed by prefixing `.with_raw_response.` to 
 from magebank import Magebank
 
 mage = Magebank()
-response = mage.agents_with.with_raw_response.retrieve(
-    "REPLACE_ME",
-)
+response = mage.agents_with.with_raw_response.retrieve("REPLACE_ME")
 print(response.headers.get('X-My-Header'))
 
 agents_with = response.parse()  # get the object that `agents_with.retrieve()` would have returned
@@ -527,9 +894,7 @@ The above interface eagerly reads the full response body when you make the reque
 To stream the response body, use `.with_streaming_response` instead, which requires a context manager and only reads the response body once you call `.read()`, `.text()`, `.json()`, `.iter_bytes()`, `.iter_text()`, `.iter_lines()` or `.parse()`. In the async client, these are async methods.
 
 ```python
-with mage.agents_with.with_streaming_response.retrieve(
-    "REPLACE_ME",
-) as response:
+with mage.agents_with.with_streaming_response.retrieve("REPLACE_ME") as response:
     print(response.headers.get("X-My-Header"))
 
     for line in response.iter_lines():
