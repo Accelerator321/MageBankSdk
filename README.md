@@ -77,8 +77,6 @@ Nested request parameters are [TypedDicts](https://docs.python.org/3/library/typ
 
 Typed requests and responses provide autocomplete and documentation within your editor. If you would like to see type errors in VS Code to help catch bugs earlier, set `python.analysis.typeCheckingMode` to `basic`.
 
-from datetime import date
-
 ## Nested params
 
 Nested parameters are dictionaries, typed using `TypedDict`, for example:
@@ -90,10 +88,7 @@ client = Magebank()
 
 client.payments.export(
     format="csv",
-    date_range={
-        "end": date.fromisoformat("2019-12-27"),
-        "start": date.fromisoformat("2019-12-27"),
-    },
+    date_range={},
 )
 ```
 
