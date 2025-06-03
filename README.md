@@ -818,10 +818,7 @@ mage = Magebank()
 
 mage.payments.export(
     format="csv",
-    date_range={
-        "end": date.fromisoformat("2019-12-27"),
-        "start": date.fromisoformat("2019-12-27"),
-    },
+    date_range={},
 )
 ```
 
