@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.1.0-alpha.6 (2025-06-17)
+
+Full Changelog: [v0.1.0-alpha.5...v0.1.0-alpha.6](https://github.com/Accelerator321/MageBankSdk/compare/v0.1.0-alpha.5...v0.1.0-alpha.6)
+
+### Features
+
+* **client:** add follow_redirects request option ([21fe041](https://github.com/Accelerator321/MageBankSdk/commit/21fe04162a69d18a1d7a52aa2bd4936bc9974597))
+
+
+### Bug Fixes
+
+* **client:** correctly parse binary response | stream ([112975a](https://github.com/Accelerator321/MageBankSdk/commit/112975ac4f003b0f990c9da5e76bccfd11bcac43))
+
+
+### Chores
+
+* **ci:** enable for pull requests ([4ce1c61](https://github.com/Accelerator321/MageBankSdk/commit/4ce1c61c62fe0730dd41b60422e3f2052a6e495c))
+* **docs:** remove reference to rye shell ([9382009](https://github.com/Accelerator321/MageBankSdk/commit/9382009724d7cd8f6dd03fb962c5ad59bc23a368))
+* **docs:** remove unnecessary param examples ([ee05298](https://github.com/Accelerator321/MageBankSdk/commit/ee05298a5c85608799cee3eb136d4299844bd4c4))
+* **internal:** update conftest.py ([637abe9](https://github.com/Accelerator321/MageBankSdk/commit/637abe902100602cb9bd91282a196b9571204a82))
+* **tests:** add tests for httpx client instantiation & proxies ([3fa8efc](https://github.com/Accelerator321/MageBankSdk/commit/3fa8efc68c0323d40c4e768f7a351ab1452c4b59))
+* **tests:** run tests in parallel ([61f36cb](https://github.com/Accelerator321/MageBankSdk/commit/61f36cbb53e564b92529913ca4cedd784f21517a))
+
 ## 0.1.0-alpha.5 (2025-05-22)
 
 Full Changelog: [v0.1.0-alpha.4...v0.1.0-alpha.5](https://github.com/Accelerator321/MageBankSdk/compare/v0.1.0-alpha.4...v0.1.0-alpha.5)
