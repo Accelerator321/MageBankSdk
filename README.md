@@ -83,7 +83,6 @@ pip install --pre magebank[aiohttp]
 Then you can enable it by instantiating the client with `http_client=DefaultAioHttpClient()`:
 
 ```python
-import os
 import asyncio
 from magebank import DefaultAioHttpClient
 from magebank import AsyncMagebank
@@ -91,7 +90,7 @@ from magebank import AsyncMagebank
 
 async def main() -> None:
     async with AsyncMagebank(
-        api_key=os.environ.get("MAGEBANK_API_KEY"),  # This is the default and can be omitted
+        api_key="My API Key",
         http_client=DefaultAioHttpClient(),
     ) as client:
         agent = await client.agents_with.retrieve(
